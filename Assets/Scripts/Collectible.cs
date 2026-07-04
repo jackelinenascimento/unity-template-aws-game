@@ -1,5 +1,12 @@
 using UnityEngine;
 
+public enum CollectibleType
+{
+    PenDrive,
+    DataCore,
+    Polvina
+}
+
 /// <summary>
 /// Coloca este script em qualquer item coletável da cena.
 ///
@@ -11,11 +18,24 @@ using UnityEngine;
 public class Collectible : MonoBehaviour
 {
     [Header("Configuração")]
+    [Tooltip("Define se o item conta para vitória ou se restaura vida.")]
+    [SerializeField] private CollectibleType type = CollectibleType.DataCore;
+
     [Tooltip("Efeito visual ao coletar (opcional — arraste um prefab de partícula).")]
     [SerializeField] private GameObject collectEffect;
 
     [Tooltip("Som ao coletar (opcional).")]
     [SerializeField] private AudioClip collectSound;
+
+    private bool _collected;
+
+    public CollectibleType Type => type;
+    public bool CountsForVictory => type != CollectibleType.Polvina;
+
+    public void SetType(CollectibleType collectibleType)
+    {
+        type = collectibleType;
+    }
 
     // ----------------------------------------------------------------
     // Trigger
@@ -24,13 +44,19 @@ public class Collectible : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         // Só reage ao Player
-        if (!other.CompareTag("Player")) return;
+        if (!other.CompareTag("Player") || _collected) return;
+        _collected = true;
 
-        // ── Avisa o GameManager que um item foi coletado ──────────────
-        GameManager.Instance?.OnItemCollected();
-
-        // ── AÇÃO: reação no OLED do ESP32 ────────────────────────────
-        ESP32SerialReader.Instance?.SendTreasure();
+        if (type == CollectibleType.Polvina)
+        {
+            other.GetComponent<HealthSystem>()?.AddLife();
+            ESP32SerialReader.Instance?.SendPolvina();
+        }
+        else
+        {
+            GameManager.Instance?.OnItemCollected(type);
+            ESP32SerialReader.Instance?.SendTreasure();
+        }
 
         // ── AÇÃO: efeito visual ───────────────────────────────────────
         if (collectEffect != null)

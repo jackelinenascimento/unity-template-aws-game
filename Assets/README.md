@@ -1,4 +1,4 @@
-# 📦 Assets
+# 📦 Assets — Ctrl+Alt+Delas
 
 Tudo que compõe o jogo fica aqui. O Unity gerencia esta pasta automaticamente — **nunca mova ou renomeie arquivos fora do Unity**, ou os `.meta` ficam órfãos e o projeto quebra.
 
@@ -18,7 +18,7 @@ Tudo que compõe o jogo fica aqui. O Unity gerencia esta pasta automaticamente �
 
 ## ⚠️ Regras de ouro
 
-1. **Sempre importe arquivos pelo Unity** (arraste para o painel Project) — nunca cole direto no explorador de arquivos.
-2. **Não delete `.meta`** — cada arquivo tem um par `.meta` que guarda o GUID. Deletar o `.meta` quebra referências na cena.
-3. **Prefabs antes de duplicar** — se for usar o mesmo objeto várias vezes (item, obstáculo), salve-o como Prefab em `Art/` antes de duplicar.
-4. **Commits** — ao commitar, inclua sempre o `.meta` junto com o arquivo original.
+1. **Sempre importe pelo Unity** — arraste para o painel Project, nunca cole direto no explorador de arquivos.
+2. **Não delete `.meta`** — cada arquivo tem um par `.meta` com o GUID. Deletar quebra referências na cena.
+3. **Prefabs antes de duplicar** — se for usar o mesmo objeto várias vezes (item, obstáculo), salve como Prefab antes de duplicar.
+4. **Commits** — inclua sempre o `.meta` junto com o arquivo original ao commitar.

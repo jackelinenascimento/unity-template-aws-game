@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 /// </summary>
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(HealthSystem))]
 public class PlayerController : MonoBehaviour
 {
     // ----------------------------------------------------------------
@@ -135,14 +136,10 @@ public class PlayerController : MonoBehaviour
     // API pública — dispara reações no OLED do ESP32
     // ----------------------------------------------------------------
 
-    /// <summary>Chame quando o jogador encontrar um tesouro → (^ u ^)</summary>
-    public void TriggerTreasureReaction() => ESP32SerialReader.Instance?.SendTreasure();
-
-    /// <summary>Chame quando o jogador levar dano → (> _ <)</summary>
-    public void TriggerDamageReaction()   => ESP32SerialReader.Instance?.SendDamage();
-
     /// <summary>Chame para voltar à carinha neutra → (O _ O)</summary>
     public void TriggerIdleReaction()     => ESP32SerialReader.Instance?.SendIdle();
+
+    public void SetKeyboardFallback(bool enabled) => forceKeyboardFallback = enabled;
 
     // ----------------------------------------------------------------
     // Gizmos

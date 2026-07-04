@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ecto-Escape | Apresentacao do Jogo</title>
+  <style>
+    :root {
+      --bg: #06111c;
+      --bg-2: #091a2b;
+      --panel: rgba(8, 20, 34, 0.82);
+      --panel-strong: rgba(8, 17, 30, 0.94);
+      --line: rgba(109, 222, 255, 0.22);
+      --text: #ecf7ff;
+      --muted: #98b7cf;
+      --cyan: #58ecff;
+      --mint: #7cf7bf;
+      --gold: #ffd56a;
+      --rose: #ff7f96;
+      --glow: 0 24px 80px rgba(0, 0, 0, 0.45);
+      --radius: 28px;
+      --radius-sm: 18px;
+      --max: 1220px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(88, 236, 255, 0.20), transparent 26rem),
+        radial-gradient(circle at 85% 12%, rgba(124, 247, 191, 0.14), transparent 22rem),
+        linear-gradient(180deg, var(--bg) 0%, #040b13 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(117, 206, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(117, 206, 255, 0.05) 1px, transparent 1px);
+      background-size: 36px 36px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.12));
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(18px);
+      background: rgba(3, 9, 17, 0.72);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand {
+      color: var(--cyan);
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .nav a {
+      color: var(--muted);
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-size: 0.92rem;
+      transition: 160ms ease;
+    }
+
+    .nav a:hover {
+      color: var(--text);
+      border-color: var(--line);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    main {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 28px 20px 90px;
+      position: relative;
+      z-index: 1;
+    }
+
+    section {
+      margin-bottom: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--panel);
+      box-shadow: var(--glow);
+    }
+
+    .hero {
+      padding: 40px 34px 36px;
+      background:
+        linear-gradient(135deg, rgba(88, 236, 255, 0.08), rgba(124, 247, 191, 0.04)),
+        var(--panel-strong);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(88, 236, 255, 0.25);
+      background: rgba(88, 236, 255, 0.08);
+      color: var(--cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    h1, h2, h3 {
+      margin: 0 0 12px;
+      line-height: 1.02;
+    }
+
+    h1 {
+      margin-top: 18px;
+      font-size: clamp(2.5rem, 6vw, 5.5rem);
+      max-width: 10ch;
+    }
+
+    h2 {
+      font-size: clamp(1.5rem, 3vw, 2.4rem);
+      padding: 28px 28px 0;
+    }
+
+    h3 {
+      color: var(--cyan);
+      font-size: 1rem;
+    }
+
+    p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 1rem;
+    }
+
+    .lead {
+      max-width: 60ch;
+      font-size: 1.08rem;
+    }
+
+    .hero-grid,
+    .grid-2,
+    .grid-3,
+    .stats {
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero-grid {
+      grid-template-columns: 1.5fr 1fr;
+      margin-top: 28px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      padding: 18px 28px 30px;
+    }
+
+    .grid-3,
+    .stats {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      padding: 18px 28px 30px;
+    }
+
+    .card,
+    .metric,
+    .quote,
+    .hero-panel,
+    .timeline-card {
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.03);
+      padding: 18px;
+    }
+
+    .hero-panel {
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 2.1rem;
+      margin-bottom: 8px;
+    }
+
+    .metric span {
+      color: var(--muted);
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text);
+      font-size: 0.92rem;
+    }
+
+    .story-stage {
+      padding: 18px 28px 30px;
+    }
+
+    .story-line {
+      display: grid;
+      grid-template-columns: 92px 1fr;
+      gap: 16px;
+      align-items: start;
+      margin-bottom: 16px;
+    }
+
+    .story-tag {
+      padding: 12px 10px;
+      border-radius: 16px;
+      text-align: center;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: rgba(88, 236, 255, 0.08);
+      border: 1px solid var(--line);
+      color: var(--cyan);
+      font-size: 0.8rem;
+    }
+
+    .story-box {
+      padding: 16px 18px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    .highlight {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .quote {
+      margin: 0 28px 30px;
+      color: var(--text);
+      font-size: 1.04rem;
+      line-height: 1.7;
+      border-left: 4px solid var(--gold);
+    }
+
+    .signal {
+      color: var(--gold);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 0.82rem;
+      margin-bottom: 10px;
+      display: inline-block;
+    }
+
+    .demo-flow {
+      padding: 18px 28px 30px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 54px 1fr;
+      gap: 14px;
+      align-items: start;
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .step-num {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: rgba(88, 236, 255, 0.12);
+      color: var(--cyan);
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+
+    table {
+      width: calc(100% - 56px);
+      margin: 18px 28px 30px;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--cyan);
+      font-size: 0.84rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    td {
+      color: var(--muted);
+    }
+
+    code {
+      font-family: "Courier New", monospace;
+      color: var(--mint);
+      font-size: 0.95em;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+      padding: 10px 8px 0;
+    }
+
+    @media (max-width: 920px) {
+      .hero-grid,
+      .grid-2,
+      .grid-3,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .story-line,
+      .step {
+        grid-template-columns: 1fr;
+      }
+
+      table {
+        width: calc(100% - 24px);
+        margin: 18px 12px 24px;
+        display: block;
+        overflow-x: auto;
+      }
+
+      h2,
+      .grid-2,
+      .grid-3,
+      .stats,
+      .story-stage,
+      .demo-flow {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .quote {
+        margin-left: 18px;
+        margin-right: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Ecto-Escape | Apresentacao</div>
+      <nav class="nav">
+        <a href="#historia">Historia</a>
+        <a href="#mundo">Mundo</a>
+        <a href="#experiencia">Experiencia</a>
+        <a href="#demo">Demo</a>
+        <a href="#impacto">Impacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="eyebrow">Ctrl+Alt+Delas · Connect Byte × AWS</div>
+      <h1>Ecto-Escape</h1>
+      <p class="lead">
+        Um platformer 2D onde a plateia nao acompanha apenas um personagem correndo
+        por um laboratorio futurista. Ela acompanha uma <span class="highlight">fuga digital com emocao visivel no mundo fisico</span>.
+      </p>
+
+      <div class="chip-row">
+        <span class="chip">Unity 6</span>
+        <span class="chip">Platformer 2D</span>
+        <span class="chip">ESP32 + OLED</span>
+        <span class="chip">Storytelling sci-fi fofo</span>
+        <span class="chip">Demo pronta para palco</span>
+      </div>
+
+      <div class="hero-grid">
+        <div class="hero-panel">
+          <h3>Pitch em uma frase</h3>
+          <p>
+            <strong>Blink</strong>, um fantasminha digital criado por uma falha de energia,
+            precisa coletar Data Cores e hackear o mainframe antes que uma limpeza
+            do sistema o apague para sempre.
+          </p>
+          <p>
+            O diferencial e que cada emocao dessa jornada sai da tela do jogo e
+            aparece ao vivo em um display OLED controlado por <strong>ESP32</strong>.
+          </p>
+        </div>
+
+        <div class="hero-panel">
+          <h3>O que a plateia vai sentir</h3>
+          <ul>
+            <li>Urgencia: Blink esta correndo contra o apagamento.</li>
+            <li>Carisma: o personagem reage como se estivesse vivo.</li>
+            <li>Surpresa: o hardware responde em tempo real ao jogo.</li>
+            <li>Clareza: objetivo simples, leitura visual imediata.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="stats">
+        <div class="metric">
+          <strong>1</strong>
+          <span>protagonista memoravel: Blink, um fantasma digital em fuga</span>
+        </div>
+        <div class="metric">
+          <strong>3</strong>
+          <span>tensoes centrais: coletar, sobreviver, escapar</span>
+        </div>
+        <div class="metric">
+          <strong>2</strong>
+          <span>camadas da demo: jogo na tela + emocao no OLED</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="historia">
+      <h2>Storytelling</h2>
+      <div class="story-stage">
+        <div class="story-line">
+          <div class="story-tag">Ato 1</div>
+          <div class="story-box">
+            <h3>O nascimento de Blink</h3>
+            <p>
+              Blink nasceu de uma falha de energia em um laboratorio de IA.
+              Ele nao deveria existir, mas ganhou forma, consciencia e um desejo
+              muito simples: <span class="highlight">continuar existindo</span>.
+            </p>
+          </div>
+        </div>
+
+        <div class="story-line">
+          <div class="story-tag">Ato 2</div>
+          <div class="story-box">
+            <h3>O conflito</h3>
+            <p>
+              Os cientistas agendaram uma limpeza completa do sistema para o fim do dia.
+              Quando esse processo comecar, Blink sera deletado. Para sobreviver, ele
+              precisa percorrer o laboratorio, coletar os Data Cores e hackear o
+              mainframe antes que seja tarde.
+            </p>
+          </div>
+        </div>
+
+        <div class="story-line">
+          <div class="story-tag">Ato 3</div>
+          <div class="story-box">
+            <h3>A fuga</h3>
+            <p>
+              Cada plataforma vencida, cada laser evitado e cada item coletado contam
+              a mesma historia: a de uma criaturinha digital tentando escapar de um
+              mundo que ela nunca escolheu, mas que agora quer chamar de lar.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="quote">
+        "Ecto-Escape" funciona porque a mecanica conversa com a narrativa: nao e
+        apenas pegar itens. E lutar para nao ser apagado.
+      </div>
+    </section>
+
+    <section id="mundo">
+      <h2>Universo do jogo</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3>Protagonista</h3>
+          <p>
+            Blink e um fantasminha branco com detalhes em azul. Fofo, expressivo
+            e tecnologico, ele flutua com leveza, mas vive sob pressao constante.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Cenario</h3>
+          <p>
+            O palco e um laboratorio hi-tech com neons, circuitos, paines
+            holograficos, supercomputadores e corredores digitais.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Tensao visual</h3>
+          <p>
+            A paleta fria e futurista contrasta com o risco permanente de lasers,
+            drones e acido fluorescente.
+          </p>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Elemento</th>
+            <th>Papel na narrativa</th>
+            <th>Leitura para a plateia</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Data Cores</td>
+            <td>Fragments do hack que tornam a fuga possivel</td>
+            <td>Cada coleta aproxima Blink da liberdade</td>
+          </tr>
+          <tr>
+            <td>Lasers</td>
+            <td>Sistema defensivo do laboratorio</td>
+            <td>Risco imediato e facil de entender visualmente</td>
+          </tr>
+          <tr>
+            <td>Drones</td>
+            <td>Vigilancia automatizada</td>
+            <td>Movimento e ameaca dinamica na fase</td>
+          </tr>
+          <tr>
+            <td>Acido fluorescente</td>
+            <td>Descarte toxico do ambiente tecnologico</td>
+            <td>Perigo ambiental que reforca o mundo sci-fi</td>
+          </tr>
+          <tr>
+            <td>Portal final</td>
+            <td>Ponto de ruptura entre prisao e fuga</td>
+            <td>Climax da demonstracao</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="experiencia">
+      <h2>O diferencial da experiencia</h2>
+      <div class="grid-2">
+        <div class="card">
+          <div class="signal">Na tela</div>
+          <h3>Gameplay simples e forte</h3>
+          <ul>
+            <li>Andar, pular, coletar e escapar.</li>
+            <li>Leitura rapida para uma plateia ver e entender na hora.</li>
+            <li>Objetivo claro: pegar os Data Cores e chegar vivo ao portal.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="signal">Fora da tela</div>
+          <h3>Hardware como emocao tangivel</h3>
+          <ul>
+            <li>O Unity envia eventos em tempo real para o ESP32.</li>
+            <li>O OLED mostra a carinha do Blink mudando ao vivo.</li>
+            <li>A plateia percebe que o jogo transborda do monitor para o mundo fisico.</li>
+          </ul>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Momento</th>
+            <th>Evento no jogo</th>
+            <th>Reacao no OLED</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Exploracao</td>
+            <td>Blink navega pelo laboratorio</td>
+            <td>Carinha neutra <code>(O_O)</code></td>
+          </tr>
+          <tr>
+            <td>Conquista</td>
+            <td>Jogadora coleta um Data Core</td>
+            <td>Carinha feliz <code>(^u^)</code></td>
+          </tr>
+          <tr>
+            <td>Perigo</td>
+            <td>Jogadora encosta em um obstaculo</td>
+            <td>Carinha assustada <code>(&gt;_&lt;)</code></td>
+          </tr>
+          <tr>
+            <td>Climax</td>
+            <td>Jogadora escapa pelo portal final</td>
+            <td>Carinha feliz novamente</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="demo">
+      <h2>Roteiro da demo para palco</h2>
+      <div class="demo-flow">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div>
+            <h3>Apresente Blink em uma frase</h3>
+            <p>
+              "Esse e o Blink. Ele nasceu de uma falha de energia e agora esta
+              tentando escapar antes de ser apagado do sistema."
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">2</div>
+          <div>
+            <h3>Mostre a mecanica principal</h3>
+            <p>
+              Ande, pule e pegue um primeiro Data Core rapidamente. Esse e o
+              momento ideal para apontar a mudanca de expressao no OLED.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">3</div>
+          <div>
+            <h3>Crie tensao com um erro controlado</h3>
+            <p>
+              Encoste de leve em um obstaculo para que a plateia veja o dano e a
+              reacao assustada do Blink no display fisico.
+            </p>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="step-num">4</div>
+          <div>
+            <h3>Feche com a fuga</h3>
+            <p>
+              Colete os itens restantes, alcance o portal e finalize com a ideia:
+              Blink nao ganhou apenas pontos. Ele ganhou uma chance de continuar existindo.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="impacto">
+      <h2>Por que esse jogo funciona em apresentacao</h2>
+      <div class="grid-3">
+        <div class="card">
+          <h3>Clareza imediata</h3>
+          <p>
+            Em poucos segundos, qualquer pessoa entende o personagem, o objetivo e
+            o que esta em risco.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Carisma</h3>
+          <p>
+            Blink nao e so um avatar funcional. Ele tem vulnerabilidade, expressao
+            e um motivo emocional para fugir.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Memorabilidade</h3>
+          <p>
+            A integracao entre jogo e OLED cria aquele momento que a plateia lembra
+            depois: "o personagem reagia no hardware ao vivo".
+          </p>
+        </div>
+      </div>
+
+      <div class="quote">
+        Ecto-Escape nao apresenta apenas um jogo. Apresenta uma pequena historia de
+        sobrevivencia digital, onde codigo, arte e hardware contam a mesma narrativa.
+      </div>
+    </section>
+
+    <p class="footer">
+      Arquivo pensado para exibicao em tela grande. Abra este HTML diretamente no navegador:
+      <code>Docs/apresentacao-jogo.html</code>
+    </p>
+  </main>
+</body>
+</html>

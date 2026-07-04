@@ -1,4 +1,4 @@
-# 🟫 Art / Chão
+# 🟫 Art / Chão — Ctrl+Alt+Delas
 
 Sprites de **chão e plataformas** — os elementos que o personagem pisa.
 Diferente do cenário, estes precisam de **Collider2D** para funcionar com física.
@@ -30,16 +30,16 @@ No text.
 
 ---
 
-## 🕹️ Dois jeitos de colocar chão na cena
+## 🕹️ Como colocar chão na cena
 
-### Jeito 1 — Objeto simples *(mais rápido para começar)*
+### Jeito 1 — Objeto simples *(mais rápido)*
 1. Hierarchy → botão direito → `2D Object > Sprite`
 2. Renomeie para `Ground`
 3. No Sprite Renderer, coloque o sprite de chão
 4. `Add Component` → **Box Collider 2D**
 5. Para alargar: `Transform > Scale X` (ex: `10`)
 
-### Jeito 2 — Tilemap *(melhor para fases com muitos blocos)*
+### Jeito 2 — Tilemap *(melhor para muitos blocos)*
 1. Importe o tileset nesta pasta
 2. No Sprite Editor, fatie em **Grid by Cell Size** (`256 × 256`)
 3. `Window > 2D > Tile Palette` → **Create New Palette** → arraste os sprites
@@ -53,16 +53,16 @@ No text.
 | Componente | Configuração |
 |------------|-------------|
 | `Sprite Renderer` | sprite do chão |
-| `Box Collider 2D` | ajustado ao tamanho do sprite |
+| `Box Collider 2D` | ajustado ao sprite |
 | `Layer` | **Ground** (crie em Edit → Project Settings → Tags and Layers) |
-| `Rigidbody2D` | **não adicionar** (ou Body Type: Static se necessário) |
+| `Rigidbody2D` | **não adicionar** no chão |
 
-> O chão **não deve se mover** — quem tem Rigidbody2D dinâmico é o personagem.
+> O chão fica parado. O `PlayerController` usa a Layer `Ground` para detectar quando pode pular.
 
 ---
 
 ## ⚠️ Atenção
 
-- Tamanho de cada tile: **256 × 256 px** — mantenha consistência.
+- Tamanho de cada tile: **256 × 256 px**.
 - Fundo transparente obrigatório.
-- A Layer `Ground` é usada pelo `PlayerController` para detectar quando pode pular.
+- A Layer `Ground` **deve ser a mesma** configurada no campo `Ground Layer` do `PlayerController`.

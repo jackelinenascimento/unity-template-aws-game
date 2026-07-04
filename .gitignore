@@ -9,8 +9,6 @@
 [Ll]ogs/
 [Uu]ser[Ss]ettings/
 [Mm]emoryCaptures/
-
-# Pasta de cache de assets importados (gerada automaticamente)
 [Aa]sset[Ss]tore-5.x/
 
 # ===========================
@@ -24,9 +22,18 @@ sysinfo.txt
 *.aab
 *.unitypackage
 *.app
+*.exe
+*.x86_64
+*.x86
 
 # ===========================
-# Visual Studio / Rider / VSCode
+# Crash e logs
+# ===========================
+crash.log
+*.stacktrace
+
+# ===========================
+# Visual Studio / Rider / VS Code
 # ===========================
 .vs/
 .vscode/
@@ -50,13 +57,23 @@ ExportedObj/
 ._*
 .Spotlight-V100
 .Trashes
+Icon?
 
 # ===========================
 # Windows
 # ===========================
 Thumbs.db
+ehthumbs.db
 Desktop.ini
 $RECYCLE.BIN/
+
+# ===========================
+# Linux
+# ===========================
+*~
+.fuse_hidden*
+.directory
+.Trash-*
 
 # ===========================
 # JetBrains Rider
@@ -64,6 +81,43 @@ $RECYCLE.BIN/
 .idea/
 
 # ===========================
+# Node / npm (caso use ferramentas JS auxiliares)
+# ===========================
+node_modules/
+npm-debug.log*
+
+# ===========================
+# Python (caso use scripts auxiliares)
+# ===========================
+__pycache__/
+*.py[cod]
+*.pyo
+
+# ===========================
+# Arduino / PlatformIO (firmware ESP32)
+# ===========================
+.pio/
+.pioenvs/
+.piolibdeps/
+*.elf
+*.bin
+*.hex
+
+# ===========================
+# Segredos / credenciais
+# ===========================
+.env
+*.env.local
+secrets.*
+credentials.*
+
+# ===========================
 # Crashlytics
 # ===========================
 crashlytics-build.properties
+
+# ===========================
+# Docs geradas automaticamente
+# ===========================
+Docs/imgs/
+# (imagens de arte movidas para Assets/Art/Sprites/ — não rastrear a cópia em Docs)

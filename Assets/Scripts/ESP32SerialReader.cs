@@ -2,6 +2,7 @@ using UnityEngine;
 using System.IO.Ports;
 using System.Threading;
 using System.Collections.Concurrent;
+using System;
 
 /// <summary>
 /// Comunicação bidirecional entre Unity e ESP32 via USB serial.
@@ -16,6 +17,7 @@ using System.Collections.Concurrent;
 ///   'I'  →  carinha neutra   (O _ O)
 ///   'T'  →  carinha feliz    (^ u ^)
 ///   'D'  →  carinha assust.  (> _ <)
+///   'P'  →  carinha polvina  (~ u ~)
 /// </summary>
 public class ESP32SerialReader : MonoBehaviour
 {
@@ -28,11 +30,17 @@ public class ESP32SerialReader : MonoBehaviour
     // Inspector
     // ----------------------------------------------------------------
     [Header("Configuração Serial")]
-    [Tooltip("Mac: /dev/tty.usbserial-XXXX  |  Windows: COM3")]
-    [SerializeField] private string portName = "/dev/tty.usbserial-0001";
+    [Tooltip("Mac/Linux: /dev/tty.usbserial-XXXX, /dev/ttyUSB0, /dev/ttyACM0  |  Windows: COM3. Pode ficar vazio para auto-detect.")]
+    [SerializeField] private string portName = "";
 
     [Tooltip("Deve bater com Serial.begin() no ESP32 → 115200")]
     [SerializeField] private int baudRate = 115200;
+
+    [Tooltip("Se desmarcado, o jogo ignora a serial e roda só com fallback local.")]
+    [SerializeField] private bool autoConnectOnStart = true;
+
+    [Tooltip("No Unix, tenta encontrar automaticamente uma porta compatível quando Port Name estiver vazio ou inválido.")]
+    [SerializeField] private bool autoDetectPortOnUnix = true;
 
     // ----------------------------------------------------------------
     // Estado público dos botões
@@ -59,9 +67,13 @@ public class ESP32SerialReader : MonoBehaviour
     private SerialPort _serial;
     private Thread     _readThread;
     private bool       _running;
+    private string     _connectedPortName;
 
     private readonly ConcurrentQueue<string> _messageQueue
         = new ConcurrentQueue<string>();
+
+    public bool IsConnected => _serial != null && _serial.IsOpen;
+    public string ConnectedPortName => _connectedPortName;
 
     // ----------------------------------------------------------------
     // Unity lifecycle
@@ -74,7 +86,16 @@ public class ESP32SerialReader : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    private void Start() => OpenSerial();
+    private void Start()
+    {
+        if (!autoConnectOnStart)
+        {
+            Debug.Log("[ESP32] Auto-connect desabilitado. Jogo seguirá com fallback local.");
+            return;
+        }
+
+        OpenSerial();
+    }
 
     private void Update()
     {
@@ -93,7 +114,13 @@ public class ESP32SerialReader : MonoBehaviour
         }
     }
 
-    private void OnDestroy()         => CloseSerial();
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
+
+        CloseSerial();
+    }
     private void OnApplicationQuit() => CloseSerial();
 
     // ----------------------------------------------------------------
@@ -109,6 +136,9 @@ public class ESP32SerialReader : MonoBehaviour
     /// <summary>Carinha assustada (> _ <) — levou dano</summary>
     public void SendDamage()   => WriteChar('D');
 
+    /// <summary>Carinha especial de vida extra (~ u ~)</summary>
+    public void SendPolvina()  => WriteChar('P');
+
     // ----------------------------------------------------------------
     // Serial
     // ----------------------------------------------------------------
@@ -117,24 +147,32 @@ public class ESP32SerialReader : MonoBehaviour
     {
         try
         {
-            _serial = new SerialPort(portName, baudRate)
+            string resolvedPort = ResolvePortName();
+            if (string.IsNullOrWhiteSpace(resolvedPort))
+            {
+                Debug.LogWarning("[ESP32] Nenhuma porta serial válida encontrada. Jogo seguirá sem hardware.");
+                return;
+            }
+
+            _serial = new SerialPort(resolvedPort, baudRate)
             {
                 ReadTimeout  = 100,
                 WriteTimeout = 100,
                 DtrEnable    = true
             };
             _serial.Open();
+            _connectedPortName = resolvedPort;
 
             _running    = true;
             _readThread = new Thread(ReadLoop) { IsBackground = true };
             _readThread.Start();
 
-            Debug.Log($"[ESP32] Conectado em {portName} @ {baudRate} baud.");
+            Debug.Log($"[ESP32] Conectado em {resolvedPort} @ {baudRate} baud.");
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
-            Debug.LogWarning($"[ESP32] Falha ao abrir '{portName}': {e.Message}\n" +
-                             "Verifique a porta no Inspector e se o ESP32 está conectado.");
+            Debug.LogWarning($"[ESP32] Falha ao abrir a serial: {e.Message}\n" +
+                             "Verifique a porta no Inspector. No Unix, também é possível rodar sem o hardware conectado.");
         }
     }
 
@@ -144,6 +182,8 @@ public class ESP32SerialReader : MonoBehaviour
         _readThread?.Join(500);
         if (_serial != null && _serial.IsOpen)
             _serial.Close();
+
+        _connectedPortName = null;
     }
 
     // ----------------------------------------------------------------
@@ -206,9 +246,50 @@ public class ESP32SerialReader : MonoBehaviour
             if (_serial != null && _serial.IsOpen)
                 _serial.Write(c.ToString());
         }
-        catch (System.Exception e)
+        catch (Exception e)
         {
             Debug.LogWarning($"[ESP32] Falha ao enviar '{c}': {e.Message}");
         }
+    }
+
+    private string ResolvePortName()
+    {
+        if (!string.IsNullOrWhiteSpace(portName))
+        {
+            if (!IsUnixLike() || !autoDetectPortOnUnix)
+                return portName;
+
+            foreach (string candidate in SerialPort.GetPortNames())
+            {
+                if (string.Equals(candidate, portName, StringComparison.OrdinalIgnoreCase))
+                    return candidate;
+            }
+        }
+
+        if (!IsUnixLike() || !autoDetectPortOnUnix)
+            return portName;
+
+        string[] ports = SerialPort.GetPortNames();
+        foreach (string candidate in ports)
+        {
+            if (candidate.Contains("tty.usbserial", StringComparison.OrdinalIgnoreCase) ||
+                candidate.Contains("tty.usbmodem", StringComparison.OrdinalIgnoreCase) ||
+                candidate.Contains("ttyUSB", StringComparison.OrdinalIgnoreCase) ||
+                candidate.Contains("ttyACM", StringComparison.OrdinalIgnoreCase))
+            {
+                return candidate;
+            }
+        }
+
+        return ports.Length > 0 ? ports[0] : string.Empty;
+    }
+
+    private static bool IsUnixLike()
+    {
+        RuntimePlatform platform = Application.platform;
+        return platform == RuntimePlatform.OSXEditor ||
+               platform == RuntimePlatform.OSXPlayer ||
+               platform == RuntimePlatform.LinuxEditor ||
+               platform == RuntimePlatform.LinuxPlayer;
     }
 }

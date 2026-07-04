@@ -1,4 +1,4 @@
-# 🏙️ Art / Cenários
+# 🏙️ Art / Cenários — Ctrl+Alt+Delas
 
 Assets de **fundo e estrutura visual** da fase — paredes, tubos, computadores, terminais, caixas.
 Estes elementos são **puramente visuais**: sem Collider2D, o personagem passa por eles.
@@ -8,10 +8,10 @@ Estes elementos são **puramente visuais**: sem Collider2D, o personagem passa p
 ## O que fica aqui
 
 - Imagem de fundo (background) da fase
-- Elementos decorativos grandes (paredes, estruturas)
-- Prefabs de decoração de cenário
+- Elementos decorativos grandes (paredes, estruturas futuristas)
+- Prefabs de decoração de cenário prontos para arrastar na cena
 
-> Obstáculos e plataformas que o personagem colide ficam em `Chão/` e na cena diretamente.
+> Plataformas e chão que o personagem pisa ficam em `Chão/`.
 
 ---
 
@@ -41,8 +41,8 @@ No text.
 3. **Pronto** — nenhum componente extra necessário.
 
 ### Profundidade (quem aparece na frente)
-Se o personagem sumir atrás de uma parede, ajuste no **Sprite Renderer**:
-- `Sorting Layer` → crie camadas: `Background` < `Default` < `Foreground`
+Se o personagem sumir atrás de um elemento, ajuste no **Sprite Renderer**:
+- `Sorting Layer` → crie: `Background` < `Default` < `Foreground`
 - `Order in Layer` → número maior = mais na frente
 
 ---
@@ -51,4 +51,4 @@ Se o personagem sumir atrás de uma parede, ajuste no **Sprite Renderer**:
 
 - Fundo transparente obrigatório.
 - Tamanho recomendado: **256 × 256 px** (ou múltiplo para elementos grandes).
-- Não adicione Collider2D aqui — se o elemento precisar de colisão, trate como plataforma em `Chão/`.
+- Não adicione Collider2D aqui. Se o elemento precisar de colisão física, trate como plataforma em `Chão/`.

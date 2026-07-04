@@ -1,6 +1,6 @@
-# 🧿 Art / Personagem
+# 🧿 Art / Personagem — Ctrl+Alt+Delas
 
-Sprites do **fantasminha do Kiro** — o personagem jogável.
+Sprites do **fantasminha do Kiro** — o personagem jogável do time.
 
 ---
 
@@ -47,11 +47,11 @@ No text.
 ## ✂️ Como fatiar a sprite sheet no Unity
 
 1. Importe o arquivo nesta pasta.
-2. No Inspector: `Texture Type` → **Sprite (2D and UI)** | `Sprite Mode` → **Multiple**.
-3. Clique em **Sprite Editor** → **Slice**.
-4. Se as expressões estiverem em grade: `Grid by Cell Size` → ex: `512 × 512`.
+2. Inspector: `Texture Type` → **Sprite (2D and UI)** | `Sprite Mode` → **Multiple**.
+3. **Sprite Editor** → **Slice**.
+4. Expressões em grade: `Grid by Cell Size` → ex: `512 × 512`.
 5. **Slice** → **Apply**.
-6. Os sprites individuais aparecem ao expandir o arquivo no Project.
+6. Os sprites individuais aparecem ao expandir o arquivo no painel Project.
 
 ---
 
@@ -60,4 +60,4 @@ No text.
 Após fatiar, arraste os sprites para o painel **Animation** para criar os clipes.
 O `PlayerController` usa o parâmetro `IsMoving` (Bool) para alternar idle ↔ walking.
 
-> Tamanho recomendado por frame: **512 × 512 px**
+> Tamanho recomendado por frame: **512 × 512 px** com fundo transparente.

@@ -1,7 +1,5 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
-using TMPro;
 
 /// <summary>
 /// Coloque este script no objeto do final da fase.
@@ -48,19 +46,21 @@ public class LevelEnd : MonoBehaviour
             return;
         }
 
+        if (GameManager.Instance != null && !GameManager.Instance.TryCompleteLevelFromPortal())
+            return;
+
         Debug.Log("[LevelEnd] Player chegou no final! Mostrando painel...");
 
-        // Mostra o painel
-        if (gameOverPanel != null)
-            gameOverPanel.SetActive(true);
-        else
-            Debug.LogWarning("[LevelEnd] Game Over Panel não está configurado no Inspector!");
+        if (GameManager.Instance == null)
+        {
+            if (gameOverPanel != null)
+                gameOverPanel.SetActive(true);
+            else
+                Debug.LogWarning("[LevelEnd] Game Over Panel não está configurado no Inspector!");
 
-        // Pausa o jogo
-        Time.timeScale = 0f;
-
-        // Reação no OLED do ESP32
-        ESP32SerialReader.Instance?.SendTreasure();
+            Time.timeScale = 0f;
+            ESP32SerialReader.Instance?.SendTreasure();
+        }
     }
 
     // ----------------------------------------------------------------
@@ -70,6 +70,9 @@ public class LevelEnd : MonoBehaviour
     public void RestartGame()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene(sceneName);
+        string targetScene = string.IsNullOrWhiteSpace(sceneName)
+            ? SceneManager.GetActiveScene().name
+            : sceneName;
+        SceneManager.LoadScene(targetScene);
     }
 }

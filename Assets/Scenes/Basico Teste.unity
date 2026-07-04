@@ -214,7 +214,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &57791090
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2727,6 +2727,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1228493758}
   - component: {fileID: 1228493757}
+  - component: {fileID: 1228493759}
   m_Layer: 0
   m_Name: ESP32
   m_TagString: Untagged
@@ -2748,6 +2749,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ESP32SerialReader
   portName: /dev/tty.usbserial-10
   baudRate: 115200
+--- !u!114 &1228493759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1228493756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63c5e59925884c7f80433ece22b0de3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SceneAutoSetup
+  collectibleSprite: {fileID: 21300000, guid: 28c6a1753e864d31821cb13a34859634, type: 3}
+  polvinaSprite: {fileID: 21300000, guid: d836a18b419140d79f513b4048fdced1, type: 3}
+  laserSprite: {fileID: 21300000, guid: 756d26b091c642f2b895d17ac60fe349, type: 3}
+  droneSprite: {fileID: 21300000, guid: d836a18b419140d79f513b4048fdced1, type: 3}
+  acidSprite: {fileID: 21300000, guid: c2cacd27d3f34a5eaae8ae08bf4eae07, type: 3}
+  gameOverPanel: {fileID: 57791089}
 --- !u!4 &1228493758
 Transform:
   m_ObjectHideFlags: 0
