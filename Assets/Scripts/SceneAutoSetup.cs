@@ -71,13 +71,13 @@ public class SceneAutoSetup : MonoBehaviour
     private void ResolveDefaultSprites()
     {
         if (penDriveSprite == null)
-            penDriveSprite = Resources.Load<Sprite>("Sprites/drive");
+            penDriveSprite = LoadSpriteFromResources("Sprites/drive");
 
         if (dataCoreSprite == null)
-            dataCoreSprite = Resources.Load<Sprite>("Sprites/chip");
+            dataCoreSprite = LoadSpriteFromResources("Sprites/chip");
 
         if (collectibleSprite == null)
-            collectibleSprite = dataCoreSprite != null ? dataCoreSprite : Resources.Load<Sprite>("Sprites/chipdrive");
+            collectibleSprite = dataCoreSprite != null ? dataCoreSprite : LoadSpriteFromResources("Sprites/chipdrive");
     }
 
     private void EnsureEnvironmentArt()
@@ -409,6 +409,23 @@ public class SceneAutoSetup : MonoBehaviour
             CollectibleType.Polvina => polvinaSprite,
             _ => dataCoreSprite != null ? dataCoreSprite : collectibleSprite
         };
+    }
+
+    private static Sprite LoadSpriteFromResources(string resourcePath)
+    {
+        Sprite sprite = Resources.Load<Sprite>(resourcePath);
+        if (sprite != null)
+            return sprite;
+
+        Texture2D texture = Resources.Load<Texture2D>(resourcePath);
+        if (texture == null)
+            return null;
+
+        return Sprite.Create(
+            texture,
+            new Rect(0f, 0f, texture.width, texture.height),
+            new Vector2(0.5f, 0.5f),
+            100f);
     }
 
     private HealthSystem EnsureHealthSystem()
