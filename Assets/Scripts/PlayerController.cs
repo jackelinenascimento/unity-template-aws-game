@@ -75,7 +75,7 @@ public class PlayerController : MonoBehaviour
         // Captura o JumpPressed do ESP32 aqui no Update e guarda no buffer.
         // Assim o FixedUpdate sempre encontra o sinal, independente da ordem de execução.
         ESP32SerialReader esp = ESP32SerialReader.Instance;
-        if (esp != null && !forceKeyboardFallback && esp.JumpPressed)
+        if (esp != null && esp.IsConnected && !forceKeyboardFallback && esp.JumpPressed)
             _jumpBuffered = true;
     }
 
@@ -85,7 +85,7 @@ public class PlayerController : MonoBehaviour
         bool  jumpThisFrame;
 
         ESP32SerialReader esp = ESP32SerialReader.Instance;
-        bool useESP = esp != null && !forceKeyboardFallback;
+        bool useESP = esp != null && esp.IsConnected && !forceKeyboardFallback;
 
         if (useESP)
         {

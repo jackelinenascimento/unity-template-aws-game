@@ -42,6 +42,10 @@ public class ESP32SerialReader : MonoBehaviour
     [Tooltip("No Unix, tenta encontrar automaticamente uma porta compatível quando Port Name estiver vazio ou inválido.")]
     [SerializeField] private bool autoDetectPortOnUnix = true;
 
+    [Header("Reações OLED")]
+    [Tooltip("Quanto tempo uma reação de coleta/dano fica visível antes de voltar para a carinha neutra.")]
+    [SerializeField] private float reactionHoldSeconds = 1.1f;
+
     // ----------------------------------------------------------------
     // Estado público dos botões
     // ----------------------------------------------------------------
@@ -68,6 +72,8 @@ public class ESP32SerialReader : MonoBehaviour
     private Thread     _readThread;
     private bool       _running;
     private string     _connectedPortName;
+    private char       _lastExpression = '\0';
+    private float      _returnToIdleAt = -1f;
 
     private readonly ConcurrentQueue<string> _messageQueue
         = new ConcurrentQueue<string>();
@@ -111,6 +117,12 @@ public class ESP32SerialReader : MonoBehaviour
         {
             JumpPressed  = true;
             _jumpPending = false;
+        }
+
+        if (_returnToIdleAt > 0f && Time.unscaledTime >= _returnToIdleAt && _lastExpression != 'I')
+        {
+            _returnToIdleAt = -1f;
+            SendIdle();
         }
     }
 
@@ -168,6 +180,7 @@ public class ESP32SerialReader : MonoBehaviour
             _readThread.Start();
 
             Debug.Log($"[ESP32] Conectado em {resolvedPort} @ {baudRate} baud.");
+            SendIdle();
         }
         catch (Exception e)
         {
@@ -245,6 +258,9 @@ public class ESP32SerialReader : MonoBehaviour
         {
             if (_serial != null && _serial.IsOpen)
                 _serial.Write(c.ToString());
+
+            _lastExpression = c;
+            _returnToIdleAt = c == 'I' ? -1f : Time.unscaledTime + reactionHoldSeconds;
         }
         catch (Exception e)
         {

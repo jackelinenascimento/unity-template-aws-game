@@ -19,8 +19,11 @@ public class SceneAutoSetup : MonoBehaviour
 
     [Header("Cenario")]
     [SerializeField] private GameObject laboratoryBackdropPrefab;
+    [SerializeField] private GameObject groundLayoutPrefab;
     [SerializeField] private Vector3 backdropPosition = new Vector3(36f, 7f, 0f);
     [SerializeField] private Vector3 backdropScale = new Vector3(3.2f, 3.2f, 1f);
+    [SerializeField] private Vector3 groundLayoutPosition = new Vector3(18f, -2.5f, 0f);
+    [SerializeField] private Vector3 groundLayoutScale = new Vector3(4.8f, 1.8f, 1f);
 
     [Header("UI")]
     [SerializeField] private GameObject gameOverPanel;
@@ -53,11 +56,13 @@ public class SceneAutoSetup : MonoBehaviour
         EnsureEnvironmentArt();
         EnsurePlayableDefaults();
         TMP_Text scoreText = EnsureHud();
+        TMP_Text timerText = EnsureTimerText();
+        TMP_Text statusText = EnsureStatusText();
         HealthSystem healthSystem = EnsureHealthSystem();
         EnsureCollectibles();
         EnsureObstacles();
         EnsureGameManager(scoreText);
-        EnsureHudManager(scoreText, healthSystem);
+        EnsureHudManager(scoreText, timerText, statusText, healthSystem);
     }
 
     private void EnsureEnvironmentArt()
@@ -69,6 +74,7 @@ public class SceneAutoSetup : MonoBehaviour
             GameObject.Find("Cenário Futurista") != null ||
             GameObject.Find("Cenario Futurista") != null)
         {
+            EnsureGroundLayout();
             return;
         }
 
@@ -81,6 +87,67 @@ public class SceneAutoSetup : MonoBehaviour
 
         foreach (TilemapRenderer renderer in backdrop.GetComponentsInChildren<TilemapRenderer>(true))
             renderer.sortingOrder = -20;
+
+        EnsureGroundLayout();
+    }
+
+    private void EnsureGroundLayout()
+    {
+        if (groundLayoutPrefab == null)
+            return;
+
+        if (HasPlayableGround())
+            return;
+
+        GameObject groundLayout = Instantiate(groundLayoutPrefab, groundLayoutPosition, Quaternion.identity);
+        groundLayout.name = "ChaoAuto";
+        groundLayout.transform.localScale = groundLayoutScale;
+
+        int groundLayer = LayerMask.NameToLayer("Ground");
+        foreach (Tilemap tilemap in groundLayout.GetComponentsInChildren<Tilemap>(true))
+        {
+            if (groundLayer >= 0)
+                tilemap.gameObject.layer = groundLayer;
+
+            TilemapRenderer renderer = tilemap.GetComponent<TilemapRenderer>();
+            if (renderer != null)
+                renderer.sortingOrder = -5;
+
+            TilemapCollider2D tilemapCollider = tilemap.GetComponent<TilemapCollider2D>();
+            if (tilemapCollider == null)
+                tilemapCollider = tilemap.gameObject.AddComponent<TilemapCollider2D>();
+
+            tilemapCollider.usedByComposite = false;
+        }
+    }
+
+    private static bool HasPlayableGround()
+    {
+        Tilemap[] tilemaps = FindObjectsByType<Tilemap>(FindObjectsSortMode.None);
+        foreach (Tilemap tilemap in tilemaps)
+        {
+            if (tilemap == null)
+                continue;
+
+            if (tilemap.GetComponent<Collider2D>() != null)
+                return true;
+        }
+
+        GameObject[] roots = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
+        foreach (GameObject root in roots)
+        {
+            if (root == null)
+                continue;
+
+            string name = root.name.ToLowerInvariant();
+            if (!name.Contains("ground") && !name.Contains("chao") && !name.Contains("tilemap"))
+                continue;
+
+            if (root.GetComponent<Collider2D>() != null)
+                return true;
+        }
+
+        return false;
     }
 
     private void EnsurePlayableDefaults()
@@ -170,7 +237,7 @@ public class SceneAutoSetup : MonoBehaviour
         manager.RefreshSceneState();
     }
 
-    private void EnsureHudManager(TMP_Text scoreText, HealthSystem healthSystem)
+    private void EnsureHudManager(TMP_Text scoreText, TMP_Text timerText, TMP_Text statusText, HealthSystem healthSystem)
     {
         HUDManager hudManager = FindFirstObjectByType<HUDManager>();
         if (hudManager == null)
@@ -179,8 +246,78 @@ public class SceneAutoSetup : MonoBehaviour
             hudManager = hudObject.AddComponent<HUDManager>();
         }
 
-        hudManager.Configure(polvinaSprite, scoreText, EnsureHeartsContainer());
+        hudManager.Configure(polvinaSprite, scoreText, EnsureHeartsContainer(), timerText, statusText);
         hudManager.Bind(healthSystem, GameManager.Instance);
+    }
+
+    private TMP_Text EnsureTimerText()
+    {
+        Canvas canvas = FindFirstObjectByType<Canvas>();
+        if (canvas == null)
+            return null;
+
+        Transform existing = canvas.transform.Find("TimerText");
+        if (existing != null)
+            return existing.GetComponent<TMP_Text>();
+
+        TMP_Text template = FindFirstObjectByType<TMP_Text>(FindObjectsInactive.Include);
+        GameObject timerObject = new GameObject("TimerText", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+        RectTransform rect = timerObject.GetComponent<RectTransform>();
+        rect.SetParent(canvas.transform, false);
+        rect.anchorMin = new Vector2(0.5f, 1f);
+        rect.anchorMax = new Vector2(0.5f, 1f);
+        rect.pivot = new Vector2(0.5f, 1f);
+        rect.anchoredPosition = new Vector2(0f, -20f);
+        rect.sizeDelta = new Vector2(260f, 44f);
+
+        TMP_Text timerText = timerObject.GetComponent<TextMeshProUGUI>();
+        timerText.text = "Limpeza: 02:00";
+        timerText.fontSize = 26f;
+        timerText.color = Color.white;
+
+        if (template != null)
+        {
+            timerText.font = template.font;
+            timerText.fontSharedMaterial = template.fontSharedMaterial;
+            timerText.alignment = TextAlignmentOptions.Top;
+        }
+
+        return timerText;
+    }
+
+    private TMP_Text EnsureStatusText()
+    {
+        Canvas canvas = FindFirstObjectByType<Canvas>();
+        if (canvas == null)
+            return null;
+
+        Transform existing = canvas.transform.Find("StatusText");
+        if (existing != null)
+            return existing.GetComponent<TMP_Text>();
+
+        TMP_Text template = FindFirstObjectByType<TMP_Text>(FindObjectsInactive.Include);
+        GameObject statusObject = new GameObject("StatusText", typeof(RectTransform), typeof(CanvasRenderer), typeof(TextMeshProUGUI));
+        RectTransform rect = statusObject.GetComponent<RectTransform>();
+        rect.SetParent(canvas.transform, false);
+        rect.anchorMin = new Vector2(0.5f, 1f);
+        rect.anchorMax = new Vector2(0.5f, 1f);
+        rect.pivot = new Vector2(0.5f, 1f);
+        rect.anchoredPosition = new Vector2(0f, -56f);
+        rect.sizeDelta = new Vector2(420f, 36f);
+
+        TMP_Text statusText = statusObject.GetComponent<TextMeshProUGUI>();
+        statusText.text = "Mainframe bloqueado";
+        statusText.fontSize = 20f;
+        statusText.color = new Color(0.36f, 0.93f, 1f);
+
+        if (template != null)
+        {
+            statusText.font = template.font;
+            statusText.fontSharedMaterial = template.fontSharedMaterial;
+            statusText.alignment = TextAlignmentOptions.Top;
+        }
+
+        return statusText;
     }
 
     private void CreateCollectible(int index, Vector3 position)

@@ -3,482 +3,300 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ecto-Escape | Showcase do Jogo</title>
+  <title>Ecto-Escape | Ctrl+Alt+Delas</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
     :root {
-      --bg: #050c15;
-      --bg-soft: #0a1624;
-      --panel: rgba(8, 17, 29, 0.82);
-      --panel-strong: rgba(6, 13, 23, 0.94);
-      --line: rgba(93, 221, 255, 0.18);
+      --bg: #040b14;
+      --panel: rgba(8,18,32,0.85);
+      --line: rgba(91,237,255,0.16);
       --text: #ecf8ff;
-      --muted: #9ab9cf;
+      --muted: #8aacbf;
       --cyan: #5bedff;
       --mint: #73ffc3;
       --gold: #ffd76d;
       --rose: #ff889b;
-      --shadow: 0 28px 80px rgba(0, 0, 0, 0.42);
-      --radius: 28px;
-      --radius-sm: 18px;
-      --max: 1220px;
+      --violet: #b39dff;
+      --shadow: 0 32px 80px rgba(0,0,0,0.5);
+      --r: 28px;
+      --rs: 18px;
+      --max: 1240px;
     }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
     body {
-      margin: 0;
+      font-family: 'Inter', 'Segoe UI', sans-serif;
       color: var(--text);
-      font-family: "Trebuchet MS", "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at top left, rgba(91, 237, 255, 0.18), transparent 24rem),
-        radial-gradient(circle at top right, rgba(115, 255, 195, 0.12), transparent 22rem),
-        linear-gradient(180deg, #07111d 0%, var(--bg) 100%);
+      background: var(--bg);
       overflow-x: hidden;
     }
-
     body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
+      content: '';
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 20% 0%, rgba(91,237,255,.14), transparent),
+        radial-gradient(ellipse 60% 40% at 80% 0%, rgba(115,255,195,.10), transparent),
+        radial-gradient(ellipse 50% 60% at 50% 100%, rgba(179,157,255,.08), transparent);
+    }
+    body::after {
+      content: '';
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
       background-image:
-        linear-gradient(rgba(113, 198, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(113, 198, 255, 0.05) 1px, transparent 1px);
-      background-size: 34px 34px;
-      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.56), rgba(0, 0, 0, 0.12));
+        linear-gradient(rgba(91,237,255,.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(91,237,255,.04) 1px, transparent 1px);
+      background-size: 36px 36px;
     }
 
+    /* ── Animações ─────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(91,237,255,0); }
+      50%       { box-shadow: 0 0 32px 4px rgba(91,237,255,.18); }
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-10px); }
+    }
+    .fade-up { animation: fadeUp .7s ease both; }
+    .fade-up-2 { animation: fadeUp .7s .15s ease both; }
+    .fade-up-3 { animation: fadeUp .7s .3s ease both; }
+    .float { animation: float 4s ease-in-out infinite; }
+
+    /* ── Topbar ─────────────────────────────────────────────── */
     .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      backdrop-filter: blur(18px);
-      background: rgba(2, 8, 15, 0.7);
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(20px) saturate(1.4);
+      background: rgba(4,11,20,.75);
       border-bottom: 1px solid var(--line);
     }
-
     .topbar-inner {
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
+      max-width: var(--max); margin: 0 auto;
+      padding: 13px 24px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
     }
-
     .brand {
-      color: var(--cyan);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      font-size: 0.9rem;
-      font-weight: 800;
+      font-weight: 900; font-size: .88rem;
+      letter-spacing: .12em; text-transform: uppercase;
+      background: linear-gradient(90deg, var(--cyan), var(--mint));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-
-    .nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
+    .nav { display: flex; flex-wrap: wrap; gap: 6px; }
     .nav a {
-      color: var(--muted);
-      text-decoration: none;
-      padding: 8px 12px;
-      border-radius: 999px;
+      color: var(--muted); text-decoration: none;
+      padding: 7px 13px; border-radius: 999px;
       border: 1px solid transparent;
-      transition: 160ms ease;
-      font-size: 0.92rem;
+      font-size: .9rem; transition: all .16s;
     }
-
     .nav a:hover {
-      color: var(--text);
-      border-color: var(--line);
-      background: rgba(255, 255, 255, 0.04);
+      color: var(--text); border-color: var(--line);
+      background: rgba(255,255,255,.05);
     }
 
+    /* ── Layout ─────────────────────────────────────────────── */
     main {
-      max-width: var(--max);
-      margin: 0 auto;
-      padding: 26px 20px 96px;
-      position: relative;
-      z-index: 1;
+      max-width: var(--max); margin: 0 auto;
+      padding: 28px 20px 100px;
+      position: relative; z-index: 1;
     }
-
     section {
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       border: 1px solid var(--line);
-      border-radius: var(--radius);
+      border-radius: var(--r);
       overflow: hidden;
       background: var(--panel);
       box-shadow: var(--shadow);
     }
+    h2 { font-size: clamp(1.5rem,3vw,2.4rem); font-weight: 900; padding: 30px 30px 0; }
+    h3 { font-size: 1.02rem; color: var(--cyan); font-weight: 700; margin-bottom: 10px; }
+    p  { color: var(--muted); line-height: 1.7; margin-bottom: 12px; }
+    p:last-child { margin-bottom: 0; }
 
+    /* ── Hero ────────────────────────────────────────────────── */
     .hero {
-      position: relative;
-      padding: 40px 34px;
-      min-height: 78vh;
-      display: grid;
-      align-items: end;
+      position: relative; min-height: 82vh;
+      display: flex; align-items: flex-end;
+      padding: 44px 36px;
       background:
-        linear-gradient(90deg, rgba(4, 11, 20, 0.94) 0%, rgba(4, 11, 20, 0.68) 48%, rgba(4, 11, 20, 0.72) 100%),
-        url("../Assets/Art/Cenários/ChatGPT Image Jun 28, 2026, 02_51_29 PM.png") center/cover no-repeat;
+        linear-gradient(135deg, rgba(4,11,20,.96) 0%, rgba(4,11,20,.72) 55%, rgba(4,11,20,.82) 100%),
+        url('../Assets/Art/Cenários/ChatGPT Image Jun 28, 2026, 02_51_29 PM.png') center/cover no-repeat;
     }
-
+    .hero-inner { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px; width: 100%; }
     .eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(91, 237, 255, 0.24);
-      background: rgba(91, 237, 255, 0.08);
-      color: var(--cyan);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-size: 0.82rem;
-      font-weight: 700;
-      margin-bottom: 18px;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 14px; border-radius: 999px;
+      border: 1px solid rgba(91,237,255,.28);
+      background: rgba(91,237,255,.07);
+      color: var(--cyan); font-size: .8rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .06em;
+      margin-bottom: 20px;
     }
-
-    h1, h2, h3 {
-      margin: 0 0 12px;
-      line-height: 1.02;
-    }
-
+    .eyebrow::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); animation: glowPulse 2s infinite; }
     h1 {
-      font-size: clamp(2.8rem, 7vw, 6rem);
-      max-width: 8ch;
+      font-size: clamp(3rem,7.5vw,6.5rem); font-weight: 900; line-height: .95;
+      max-width: 8ch; margin-bottom: 18px;
+      background: linear-gradient(135deg, #fff 30%, var(--cyan) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-
-    h2 {
-      font-size: clamp(1.55rem, 3vw, 2.5rem);
-      padding: 28px 28px 0;
-    }
-
-    h3 {
-      color: var(--cyan);
-      font-size: 1rem;
-    }
-
-    p {
-      margin: 0 0 14px;
-      color: var(--muted);
-      line-height: 1.65;
-    }
-
-    .hero-copy {
-      max-width: 64ch;
-    }
-
     .lead {
-      font-size: 1.12rem;
-      max-width: 58ch;
+      font-size: 1.15rem; color: var(--muted); max-width: 52ch;
+      line-height: 1.7; margin-bottom: 24px;
     }
-
-    .hero-grid,
-    .grid-2,
-    .grid-3,
-    .stats,
-    .feature-grid,
-    .scene-grid {
-      display: grid;
-      gap: 16px;
-    }
-
-    .hero-grid {
-      grid-template-columns: 1.35fr 0.95fr;
-      margin-top: 28px;
-    }
-
-    .grid-2 {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      padding: 20px 28px 30px;
-    }
-
-    .grid-3,
-    .stats,
-    .feature-grid,
-    .scene-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      padding: 20px 28px 30px;
-    }
-
-    .card,
-    .metric,
-    .quote,
-    .glass,
-    .feature {
-      border: 1px solid var(--line);
-      border-radius: var(--radius-sm);
-      background: rgba(255, 255, 255, 0.03);
-      padding: 18px;
-    }
-
-    .glass {
-      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
-    }
-
-    .metric strong {
-      display: block;
-      font-size: 2.1rem;
-      margin-bottom: 8px;
-    }
-
-    .metric span {
-      color: var(--muted);
-    }
-
-    .chip-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 18px;
-    }
-
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
     .chip {
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--text);
-      font-size: 0.92rem;
+      padding: 7px 14px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.05);
+      color: var(--text); font-size: .9rem;
     }
 
-    .mini-stage {
-      display: grid;
-      grid-template-columns: 180px 1fr;
-      gap: 16px;
-      align-items: center;
+    /* ── Blink card ──────────────────────────────────────────── */
+    .blink-card {
+      background: linear-gradient(145deg, rgba(91,237,255,.1), rgba(179,157,255,.07));
+      border: 1px solid rgba(91,237,255,.25);
+      border-radius: var(--rs); padding: 24px;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .blink-img {
+      width: 110px; height: 110px; object-fit: contain;
+      filter: drop-shadow(0 0 20px rgba(91,237,255,.45));
     }
 
-    .character-art {
-      width: 100%;
-      max-width: 180px;
-      aspect-ratio: 1 / 1;
-      object-fit: cover;
-      border-radius: 22px;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.04);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.32);
+    /* ── Stats bar ───────────────────────────────────────────── */
+    .stats {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 1px;
+      background: var(--line);
     }
-
-    .feature {
-      text-align: center;
-      padding: 22px 18px;
+    .stat {
+      background: var(--panel); padding: 28px 24px;
+      display: flex; flex-direction: column; gap: 6px;
     }
+    .stat strong { font-size: 2.6rem; font-weight: 900; color: var(--cyan); line-height: 1; }
+    .stat span   { color: var(--muted); font-size: .94rem; }
 
-    .feature img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      border-radius: 16px;
-      border: 1px solid var(--line);
-      margin-bottom: 14px;
-      background: rgba(255, 255, 255, 0.04);
-    }
-
-    .scene-card {
-      overflow: hidden;
-      padding: 0;
-    }
-
-    .scene-card img {
-      display: block;
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      border-bottom: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.04);
-    }
-
-    .scene-copy {
-      padding: 18px;
-    }
-
-    .story-block {
-      padding: 20px 28px 30px;
-      display: grid;
-      gap: 14px;
-    }
-
+    /* ── Story ───────────────────────────────────────────────── */
+    .story-block { padding: 24px 30px 32px; display: grid; gap: 12px; }
     .story-line {
-      display: grid;
-      grid-template-columns: 86px 1fr;
-      gap: 14px;
-      align-items: start;
-      padding: 16px;
-      border-radius: 18px;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.03);
+      display: grid; grid-template-columns: 80px 1fr; gap: 16px; align-items: start;
+      padding: 18px; border-radius: var(--rs);
+      border: 1px solid var(--line); background: rgba(255,255,255,.025);
+      transition: border-color .2s, background .2s;
     }
-
+    .story-line:hover { border-color: rgba(91,237,255,.3); background: rgba(91,237,255,.04); }
     .tag {
-      display: grid;
-      place-items: center;
-      padding: 12px 10px;
-      border-radius: 14px;
-      font-size: 0.8rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--cyan);
-      background: rgba(91, 237, 255, 0.08);
-      border: 1px solid var(--line);
+      display: grid; place-items: center; padding: 10px 8px;
+      border-radius: 12px; font-size: .72rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: .06em;
+      color: var(--cyan); background: rgba(91,237,255,.08);
+      border: 1px solid rgba(91,237,255,.22); text-align: center;
+    }
+    .quote-block {
+      margin: 0 30px 30px;
+      padding: 20px 22px;
+      border-left: 3px solid var(--gold);
+      background: rgba(255,215,109,.05);
+      border-radius: 0 var(--rs) var(--rs) 0;
+      font-size: 1.05rem; color: var(--text); line-height: 1.7;
     }
 
-    .demo-flow {
-      padding: 20px 28px 30px;
-      display: grid;
-      gap: 14px;
+    /* ── Cenários ────────────────────────────────────────────── */
+    .scene-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; padding: 24px 30px 32px; }
+    .scene-card { border: 1px solid var(--line); border-radius: var(--rs); overflow: hidden; background: rgba(255,255,255,.025); transition: transform .2s, border-color .2s; }
+    .scene-card:hover { transform: translateY(-4px); border-color: rgba(91,237,255,.3); }
+    .scene-card img { display: block; width: 100%; height: 200px; object-fit: cover; border-bottom: 1px solid var(--line); }
+    .scene-copy { padding: 18px; }
+
+    /* ── Mecânicas ───────────────────────────────────────────── */
+    .feature-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; padding: 24px 30px 32px; }
+    .feature {
+      border: 1px solid var(--line); border-radius: var(--rs);
+      overflow: hidden; background: rgba(255,255,255,.025);
+      transition: transform .2s, border-color .2s;
+    }
+    .feature:hover { transform: translateY(-4px); border-color: rgba(91,237,255,.28); }
+    .feature img { display: block; width: 100%; height: 160px; object-fit: cover; border-bottom: 1px solid var(--line); background: rgba(0,0,0,.3); }
+    .feature-body { padding: 18px; }
+
+    /* ── Tabela ──────────────────────────────────────────────── */
+    table { width: calc(100% - 60px); margin: 4px 30px 30px; border-collapse: collapse; border-radius: var(--rs); overflow: hidden; background: rgba(255,255,255,.025); }
+    th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid rgba(255,255,255,.07); font-size: .95rem; }
+    th { color: var(--cyan); font-size: .78rem; text-transform: uppercase; letter-spacing: .07em; background: rgba(255,255,255,.03); }
+    td { color: var(--muted); }
+    tr:last-child td { border-bottom: 0; }
+    code { font-family: 'Courier New', monospace; color: var(--mint); background: rgba(115,255,195,.08); padding: 2px 6px; border-radius: 6px; font-size: .92em; }
+
+    /* ── OLED table ──────────────────────────────────────────── */
+    .oled-face {
+      font-family: 'Courier New', monospace; font-size: 1.1rem;
+      color: var(--cyan); letter-spacing: .08em;
     }
 
+    /* ── Grid 2/3 genérico ───────────────────────────────────── */
+    .grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; padding: 24px 30px 32px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; padding: 24px 30px 32px; }
+    .card { border: 1px solid var(--line); border-radius: var(--rs); background: rgba(255,255,255,.025); padding: 22px; }
+    ul { padding-left: 18px; color: var(--muted); line-height: 1.8; }
+    li { margin-bottom: 6px; }
+
+    /* ── Demo steps ──────────────────────────────────────────── */
+    .demo-flow { padding: 24px 30px 32px; display: grid; gap: 12px; }
     .step {
-      display: grid;
-      grid-template-columns: 56px 1fr;
-      gap: 14px;
-      align-items: start;
-      padding: 16px;
-      border-radius: 18px;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.03);
+      display: grid; grid-template-columns: 60px 1fr; gap: 18px; align-items: start;
+      padding: 20px; border-radius: var(--rs);
+      border: 1px solid var(--line); background: rgba(255,255,255,.025);
+      transition: border-color .2s;
     }
-
+    .step:hover { border-color: rgba(91,237,255,.3); }
     .step-num {
-      width: 56px;
-      height: 56px;
-      display: grid;
-      place-items: center;
-      border-radius: 16px;
-      background: rgba(91, 237, 255, 0.1);
-      color: var(--cyan);
-      font-size: 1.15rem;
-      font-weight: 800;
+      width: 60px; height: 60px; display: grid; place-items: center;
+      border-radius: 16px; background: rgba(91,237,255,.1);
+      color: var(--cyan); font-size: 1.3rem; font-weight: 900;
+      border: 1px solid rgba(91,237,255,.22);
     }
 
-    .quote {
-      margin: 0 28px 30px;
-      color: var(--text);
-      border-left: 4px solid var(--gold);
-      font-size: 1.04rem;
-      line-height: 1.7;
+    /* ── Hardware section ────────────────────────────────────── */
+    .hw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 24px 30px 32px; }
+    .hw-card { border: 1px solid var(--line); border-radius: var(--rs); padding: 22px; background: rgba(255,255,255,.025); }
+    .oled-preview {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px;
     }
-
-    table {
-      width: calc(100% - 56px);
-      margin: 18px 28px 30px;
-      border-collapse: collapse;
-      border-radius: 18px;
-      overflow: hidden;
-      background: rgba(255, 255, 255, 0.03);
-    }
-
-    th, td {
-      padding: 14px 16px;
-      text-align: left;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      vertical-align: top;
-    }
-
-    th {
-      color: var(--cyan);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      font-size: 0.84rem;
-      background: rgba(255, 255, 255, 0.03);
-    }
-
-    td {
-      color: var(--muted);
-    }
-
-    ul {
-      margin: 0;
-      padding-left: 18px;
-      color: var(--muted);
-      line-height: 1.65;
-    }
-
-    li {
-      margin-bottom: 8px;
-    }
-
-    .highlight {
-      color: var(--text);
-      font-weight: 700;
-    }
-
-    .footer {
+    .oled-box {
+      flex: 1; min-width: 90px;
+      border: 1px solid rgba(91,237,255,.2); border-radius: 12px;
+      background: #000; padding: 14px 10px;
       text-align: center;
-      color: var(--muted);
-      font-size: 0.95rem;
-      padding-top: 8px;
     }
+    .oled-box .face { font-family: monospace; font-size: 1rem; color: #5bedff; display: block; margin-bottom: 8px; }
+    .oled-box .label { font-size: .75rem; color: var(--muted); }
 
-    code {
-      font-family: "Courier New", monospace;
-      color: var(--mint);
-      font-size: 0.95em;
-    }
+    /* ── Footer ──────────────────────────────────────────────── */
+    .footer { text-align: center; color: var(--muted); font-size: .92rem; padding: 40px 0 20px; }
 
-    @media (max-width: 920px) {
-      .hero {
-        min-height: auto;
-        padding: 28px 20px 24px;
-      }
-
-      .hero-grid,
-      .grid-2,
-      .grid-3,
-      .stats,
-      .feature-grid,
-      .scene-grid,
-      .mini-stage,
-      .story-line,
-      .step {
-        grid-template-columns: 1fr;
-      }
-
-      h2,
-      .grid-2,
-      .grid-3,
-      .stats,
-      .feature-grid,
-      .scene-grid,
-      .story-block,
-      .demo-flow {
-        padding-left: 18px;
-        padding-right: 18px;
-      }
-
-      table {
-        width: calc(100% - 24px);
-        margin: 18px 12px 24px;
-        display: block;
-        overflow-x: auto;
-      }
-
-      .quote {
-        margin-left: 18px;
-        margin-right: 18px;
-      }
+    /* ── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .hero { min-height: auto; padding: 28px 20px 28px; }
+      .hero-inner, .grid-2, .grid-3, .scene-grid, .feature-grid, .hw-grid,
+      .story-line, .step { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      h2, .story-block, .demo-flow, .grid-2, .grid-3, .scene-grid,
+      .feature-grid, .hw-grid { padding-left: 18px; padding-right: 18px; }
+      table { width: calc(100% - 36px); margin: 4px 18px 24px; display: block; overflow-x: auto; }
+      .quote-block { margin: 0 18px 24px; }
     }
   </style>
 </head>
 <body>
+
   <header class="topbar">
     <div class="topbar-inner">
-      <div class="brand">Ecto-Escape | Showcase</div>
+      <div class="brand">Ecto-Escape · Ctrl+Alt+Delas</div>
       <nav class="nav">
         <a href="#jogo">O jogo</a>
-        <a href="#historia">Historia</a>
-        <a href="#mecanicas">Mecanicas</a>
+        <a href="#historia">História</a>
+        <a href="#cenarios">Cenários</a>
+        <a href="#mecanicas">Mecânicas</a>
         <a href="#hardware">Hardware</a>
         <a href="#demo">Demo ao vivo</a>
       </nav>
@@ -486,290 +304,216 @@
   </header>
 
   <main>
+
+    <!-- ── HERO ──────────────────────────────────────────────── -->
     <section class="hero" id="jogo">
-      <div class="hero-copy">
-        <div class="eyebrow">Ctrl+Alt+Delas · Connect Byte × AWS</div>
-        <h1>Ecto-Escape</h1>
-        <p class="lead">
-          Um jogo de plataforma 2D sobre fugir, sobreviver e continuar existindo.
-          Aqui, a plateia nao assiste apenas a uma fase. Ela acompanha a tentativa
-          de um ser digital de escapar antes de ser apagado.
-        </p>
-        <div class="chip-row">
-          <span class="chip">Platformer 2D</span>
-          <span class="chip">Unity 6</span>
-          <span class="chip">Blink no OLED</span>
-          <span class="chip">Sci-fi fofo</span>
-          <span class="chip">Perfeito para demo</span>
+      <div class="hero-inner">
+        <div>
+          <div class="eyebrow fade-up">Connect Byte × AWS · 2026</div>
+          <h1 class="fade-up-2">Ecto-<br>Escape</h1>
+          <p class="lead fade-up-3">
+            Um jogo de plataforma 2D sobre fugir, sobreviver<br>
+            e continuar existindo.
+          </p>
+          <div class="chip-row fade-up-3">
+            <span class="chip">Platformer 2D</span>
+            <span class="chip">Unity 6</span>
+            <span class="chip">ESP32 + OLED</span>
+            <span class="chip">Sci-fi fofo</span>
+            <span class="chip">Evento 1 dia</span>
+          </div>
         </div>
 
-        <div class="hero-grid">
-          <div class="glass">
-            <h3>O que esse jogo entrega no palco</h3>
+        <div class="blink-card fade-up-2">
+          <img class="blink-img float" src="../Assets/Art/Personagem/personagem.png" alt="Blink — o fantasminha">
+          <div>
+            <h3>Conheça o Blink</h3>
             <p>
-              Um personagem carismatico, objetivo instantaneamente compreensivel,
-              obstaculos claros e um diferencial fisico: cada reacao do Blink pode
-              sair da tela e aparecer ao vivo no display OLED.
+              Branco, detalhes em azul, formato arredondado.
+              Nasceu de uma falha no laboratório e não quer ser deletado.
             </p>
-            <p>
-              Em vez de apresentar "um projeto", esta pagina apresenta
-              <span class="highlight">o proprio jogo</span>: seu clima, sua historia,
-              sua tensao e o motivo pelo qual ele funciona diante de uma plateia.
-            </p>
-          </div>
-
-          <div class="glass mini-stage">
-            <img class="character-art" src="../Assets/Art/Personagem/personagem.png" alt="Arte do personagem Blink">
-            <div>
-              <h3>Conheca Blink</h3>
-              <p>
-                O fantasminha do time: branco, com detalhes em azul, formato arredondado
-                e cara de mascote digital. Pequeno, fofo, vulneravel e decidido a nao desaparecer.
-              </p>
-            </div>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- ── STATS ─────────────────────────────────────────────── -->
     <section>
       <div class="stats">
-        <div class="metric">
+        <div class="stat">
           <strong>1</strong>
-          <span>objetivo central: coletar Data Cores e escapar do laboratorio</span>
+          <span>objetivo: coletar Data Cores e escapar do laboratório</span>
         </div>
-        <div class="metric">
+        <div class="stat">
           <strong>3</strong>
-          <span>perigos principais: laser, drone e acido fluorescente</span>
+          <span>perigos: laser, drone de patrulha e ácido fluorescente</span>
         </div>
-        <div class="metric">
+        <div class="stat">
           <strong>2</strong>
-          <span>camadas de leitura: gameplay na tela e emocao no hardware</span>
+          <span>camadas: gameplay na tela + emoção no OLED físico</span>
         </div>
       </div>
     </section>
 
+    <!-- ── HISTÓRIA ───────────────────────────────────────────── -->
     <section id="historia">
-      <h2>A historia que a plateia acompanha</h2>
+      <h2>A história que a plateia acompanha</h2>
       <div class="story-block">
         <div class="story-line">
           <div class="tag">Origem</div>
           <div>
             <h3>Blink nasceu por acidente</h3>
-            <p>
-              Em um laboratorio de IA, uma falha de energia criou algo inesperado:
-              Blink. Ele nao deveria existir, mas passou a existir com consciencia,
-              curiosidade e medo de ser apagado.
-            </p>
+            <p>Uma falha de energia num laboratório de IA criou algo inesperado. Blink não devia existir — mas passou a existir, com consciência, curiosidade e medo de ser apagado.</p>
           </div>
         </div>
-
         <div class="story-line">
           <div class="tag">Conflito</div>
           <div>
             <h3>O sistema vai ser limpo</h3>
-            <p>
-              Os cientistas programaram uma limpeza completa para o fim do dia.
-              Quando ela acontecer, Blink desaparece. Para sobreviver, ele precisa
-              coletar os Data Cores e hackear a propria rota de fuga.
-            </p>
+            <p>Os cientistas programaram uma limpeza completa para o fim do dia. Quando ela acontecer, Blink desaparece. Para sobreviver, ele precisa coletar os Data Cores e hackear a própria rota de fuga.</p>
           </div>
         </div>
-
         <div class="story-line">
-          <div class="tag">Missao</div>
+          <div class="tag">Missão</div>
           <div>
-            <h3>Cada salto vira uma tentativa de continuar vivo</h3>
-            <p>
-              O jogo transforma mecanicas simples em narrativa: andar, pular,
-              desviar e coletar passam a significar resistir ao apagamento.
-            </p>
+            <h3>Cada salto é uma tentativa de continuar vivo</h3>
+            <p>Andar, pular, desviar e coletar passam a significar resistir ao apagamento. A mecânica mais simples carrega o peso da sobrevivência.</p>
           </div>
         </div>
       </div>
-
-      <div class="quote">
-        Ecto-Escape funciona no palco porque a narrativa e lida em segundos:
-        "esse personagem vai ser apagado se nao escapar agora".
+      <div class="quote-block">
+        Ecto-Escape funciona no palco porque a narrativa é lida em segundos:<br>
+        <strong>"esse personagem vai ser apagado se não escapar agora."</strong>
       </div>
     </section>
 
+    <!-- ── CENÁRIOS ───────────────────────────────────────────── -->
     <section id="cenarios">
-      <h2>Os cenarios e a identidade visual de voces</h2>
+      <h2>Os cenários e a identidade visual de vocês</h2>
       <div class="scene-grid">
-        <article class="card scene-card">
-          <img src="../Assets/Art/Cenários/ChatGPT Image Jun 28, 2026, 02_51_29 PM.png" alt="Cenário principal do laboratório sci-fi">
+        <article class="scene-card">
+          <img src="../Assets/Art/Cenários/ChatGPT Image Jun 28, 2026, 02_51_29 PM.png" alt="Laboratório sci-fi">
           <div class="scene-copy">
-            <h3>Laboratorio sci-fi modular</h3>
-            <p>
-              O jogo ja traz o clima do time: estruturas futuristas, computadores,
-              tubos, portas e fundo de laboratorio digital.
-            </p>
+            <h3>Laboratório sci-fi modular</h3>
+            <p>Estruturas futuristas, computadores, tubos e painéis holográficos. O clima está no projeto desde o começo.</p>
           </div>
         </article>
-        <article class="card scene-card">
-          <img src="../Assets/Art/Chão/ChatGPT Image Jun 28, 2026, 04_40_29 PM.png" alt="Tiles e chão do laboratório">
+        <article class="scene-card">
+          <img src="../Assets/Art/Chão/ChatGPT Image Jun 28, 2026, 04_40_29 PM.png" alt="Chão e plataformas">
           <div class="scene-copy">
-            <h3>Chao e plataformas do proprio projeto</h3>
-            <p>
-              O Blink nao corre num template vazio. Ele atravessa plataformas e
-              pisos desenhados para essa fase com cara de laboratorio.
-            </p>
+            <h3>Plataformas do próprio projeto</h3>
+            <p>Blink não corre em template genérico. Ele atravessa tiles desenhados para o mundo do laboratório.</p>
           </div>
         </article>
-        <article class="card scene-card">
-          <img src="../Assets/Art/Decoração/ChatGPT Image Jul 3, 2026, 10_53_11 PM.png" alt="Decoração neon do laboratório">
+        <article class="scene-card">
+          <img src="../Assets/Art/Decoração/ChatGPT Image Jul 3, 2026, 10_53_11 PM.png" alt="Decoração neon">
           <div class="scene-copy">
-            <h3>Decoracao que da personalidade</h3>
-            <p>
-              Neon, hologramas, props e elementos de apoio reforcam que esse e o
-              mundo de voces, nao uma demo generica.
-            </p>
+            <h3>Decoração com personalidade</h3>
+            <p>Neon, hologramas e props reforçam que esse é o mundo de vocês — não uma demo genérica.</p>
           </div>
         </article>
-      </div>
-
-      <div class="quote">
-        Esta vitrine agora usa os proprios cenarios do repositorio para vender o jogo
-        com a linguagem visual do time.
       </div>
     </section>
 
+    <!-- ── MECÂNICAS ──────────────────────────────────────────── -->
     <section id="mecanicas">
       <h2>O que acontece durante o jogo</h2>
       <div class="feature-grid">
         <article class="feature">
-          <img src="../Docs/imgs/chipdrive.png" alt="Data Core do jogo">
-          <h3>Coletar Data Cores</h3>
-          <p>
-            Os itens representam o progresso do hack. Cada coleta aproxima Blink da liberdade.
-          </p>
+          <img src="../Docs/imgs/chipdrive.png" alt="Data Core">
+          <div class="feature-body">
+            <h3>Coletar Data Cores</h3>
+            <p>Cada item aproxima Blink do hack final. Três coletados e o portal de fuga se abre.</p>
+          </div>
         </article>
         <article class="feature">
           <img src="../Docs/imgs/laser.png" alt="Laser de segurança">
-          <h3>Desviar dos lasers</h3>
-          <p>
-            Barreiras de seguranca deixam a tensao visual imediata e facil de entender.
-          </p>
+          <div class="feature-body">
+            <h3>Desviar dos lasers</h3>
+            <p>Barreiras vermelhas intermitentes. A tensão visual é imediata e fácil de entender.</p>
+          </div>
         </article>
         <article class="feature">
           <img src="../Docs/imgs/poca.png" alt="Ácido fluorescente">
-          <h3>Sobreviver ao laboratorio</h3>
-          <p>
-            Drones e acido fluorescente reforcam a sensacao de que o ambiente quer expulsar Blink.
-          </p>
+          <div class="feature-body">
+            <h3>Sobreviver ao laboratório</h3>
+            <p>Drones e ácido fluorescente reforçam que o ambiente quer expulsar Blink.</p>
+          </div>
         </article>
       </div>
 
       <table>
         <thead>
-          <tr>
-            <th>Momento do jogo</th>
-            <th>O que a pessoa jogando faz</th>
-            <th>O que a plateia entende</th>
-          </tr>
+          <tr><th>Momento</th><th>O que a pessoa jogando faz</th><th>O que a plateia entende</th></tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Inicio</td>
-            <td>Move Blink pelas primeiras plataformas</td>
-            <td>Existe um caminho de fuga e ele precisa ser vencido</td>
-          </tr>
-          <tr>
-            <td>Coleta</td>
-            <td>Pega os Data Cores</td>
-            <td>O personagem esta reunindo o necessario para escapar</td>
-          </tr>
-          <tr>
-            <td>Perigo</td>
-            <td>Erra ou encosta num obstaculo</td>
-            <td>O laboratorio esta reagindo e tentando impedir a fuga</td>
-          </tr>
-          <tr>
-            <td>Final</td>
-            <td>Alcanca o portal</td>
-            <td>O personagem venceu o sistema e sobreviveu</td>
-          </tr>
+          <tr><td>Início</td><td>Move Blink pelas primeiras plataformas</td><td>Existe um caminho de fuga que precisa ser vencido</td></tr>
+          <tr><td>Coleta</td><td>Pega os Data Cores</td><td>O personagem está reunindo o necessário para escapar</td></tr>
+          <tr><td>Perigo</td><td>Erra ou encosta num obstáculo</td><td>O laboratório está reagindo e tentando impedir a fuga</td></tr>
+          <tr><td>Final</td><td>Alcança o portal</td><td>O personagem venceu o sistema e sobreviveu</td></tr>
         </tbody>
       </table>
     </section>
 
+    <!-- ── O QUE FAZ SER DE VOCÊS ─────────────────────────────── -->
     <section>
-      <h2>O que faz esse jogo ser de voces</h2>
+      <h2>O que faz esse jogo ser de vocês</h2>
       <div class="grid-3">
         <div class="card">
-          <h3>Mascote proprio</h3>
-          <p>
-            O centro da experiencia e o fantasminha do Kiro, com visual fofo e
-            tecnologico, e nao um avatar generico de plataforma.
-          </p>
+          <h3>Mascote próprio</h3>
+          <p>O centro é o fantasminha do Kiro — visual fofo e tecnológico, não um avatar genérico de plataforma.</p>
         </div>
         <div class="card">
-          <h3>Cenario com assinatura</h3>
-          <p>
-            O laboratorio e montado com os assets de cenario, chao e decoracao que
-            ja estavam no projeto e definem a atmosfera da fase.
-          </p>
+          <h3>Cenário com assinatura</h3>
+          <p>O laboratório é montado com os assets de cenário, chão e decoração que já estavam no projeto.</p>
         </div>
         <div class="card">
           <h3>Hardware que participa</h3>
-          <p>
-            O OLED e o ESP32 ampliam a emocao do Blink e ajudam a transformar a
-            demo em uma apresentacao memoravel.
-          </p>
+          <p>O OLED e o ESP32 ampliam a emoção do Blink e transformam a demo numa apresentação memorável.</p>
         </div>
       </div>
     </section>
 
+    <!-- ── HARDWARE ───────────────────────────────────────────── -->
     <section id="hardware">
-      <h2>O toque que torna a demo memoravel</h2>
-      <div class="grid-2">
-        <div class="card">
+      <h2>O toque que torna a demo memorável</h2>
+      <div class="hw-grid">
+        <div class="hw-card">
           <h3>Gameplay na tela</h3>
           <ul>
             <li>Blink corre, pula, coleta e sofre dano.</li>
             <li>O HUD mostra o progresso da fuga.</li>
-            <li>O portal fecha a jornada quando tudo da certo.</li>
+            <li>O portal encerra a jornada quando tudo dá certo.</li>
           </ul>
         </div>
-        <div class="card">
-          <h3>Emocao fora da tela</h3>
+        <div class="hw-card">
+          <h3>Emoção fora da tela</h3>
           <ul>
             <li>O Unity envia eventos para o ESP32.</li>
-            <li>O OLED muda a expressao do Blink em tempo real.</li>
+            <li>O OLED muda a expressão do Blink em tempo real.</li>
             <li>A plateia enxerga que o personagem "reage" ao vivo.</li>
           </ul>
+          <div class="oled-preview">
+            <div class="oled-box"><span class="face">(O_O)</span><span class="label">Navegando</span></div>
+            <div class="oled-box"><span class="face">(^u^)</span><span class="label">Coletou!</span></div>
+            <div class="oled-box"><span class="face">(&gt;_&lt;)</span><span class="label">Dano!</span></div>
+          </div>
         </div>
       </div>
 
       <table>
         <thead>
-          <tr>
-            <th>Evento</th>
-            <th>Sinal enviado</th>
-            <th>Expressao do Blink</th>
-          </tr>
+          <tr><th>Evento no jogo</th><th>Sinal USB</th><th>Expressão no OLED</th></tr>
         </thead>
         <tbody>
-          <tr>
-            <td>Navegacao normal</td>
-            <td><code>I</code></td>
-            <td>Neutra <code>(O_O)</code></td>
-          </tr>
-          <tr>
-            <td>Coletou item</td>
-            <td><code>T</code></td>
-            <td>Feliz <code>(^u^)</code></td>
-          </tr>
-          <tr>
-            <td>Recebeu dano</td>
-            <td><code>D</code></td>
-            <td>Assustada <code>(&gt;_&lt;)</code></td>
-          </tr>
+          <tr><td>Navegação normal</td><td><code>I</code></td><td class="oled-face">(O_O) — Neutra</td></tr>
+          <tr><td>Coletou Data Core</td><td><code>T</code></td><td class="oled-face">(^u^) — Feliz</td></tr>
+          <tr><td>Recebeu dano</td><td><code>D</code></td><td class="oled-face">(&gt;_&lt;) — Assustada</td></tr>
         </tbody>
       </table>
     </section>
 
+    <!-- ── DEMO ───────────────────────────────────────────────── -->
     <section id="demo">
       <h2>Como apresentar ao vivo</h2>
       <div class="demo-flow">
@@ -777,56 +521,39 @@
           <div class="step-num">1</div>
           <div>
             <h3>Abra com a frase certa</h3>
-            <p>
-              "Esse e o Blink. Ele nasceu de uma falha no laboratorio e agora
-              precisa escapar antes de ser deletado."
-            </p>
+            <p>"Esse é o Blink. Ele nasceu de uma falha no laboratório e agora precisa escapar antes de ser deletado."</p>
           </div>
         </div>
-
         <div class="step">
           <div class="step-num">2</div>
           <div>
-            <h3>Mostre uma coleta rapido</h3>
-            <p>
-              Pegue um Data Core cedo na demo para a plateia entender o objetivo
-              e enxergar a mudanca de expressao no OLED.
-            </p>
+            <h3>Mostre uma coleta rápido</h3>
+            <p>Pegue um Data Core cedo na demo para a plateia entender o objetivo e ver a mudança de expressão no OLED.</p>
           </div>
         </div>
-
         <div class="step">
           <div class="step-num">3</div>
           <div>
-            <h3>Crie tensao com um obstaculo</h3>
-            <p>
-              Passe por um laser ou tome dano de forma controlada para deixar
-              claro que a fuga tem risco real.
-            </p>
+            <h3>Crie tensão com um obstáculo</h3>
+            <p>Passe por um laser ou tome dano de forma controlada para deixar claro que a fuga tem risco real.</p>
           </div>
         </div>
-
         <div class="step">
           <div class="step-num">4</div>
           <div>
             <h3>Feche com o portal</h3>
-            <p>
-              Termine com a fuga e a leitura emocional: Blink nao ganhou apenas
-              pontos. Ele ganhou mais tempo de existencia.
-            </p>
+            <p>Termine com a fuga. Blink não ganhou apenas pontos — ele ganhou mais tempo de existência.</p>
           </div>
         </div>
       </div>
-
-      <div class="quote">
-        Se a demo estiver aberta ao lado desta apresentacao, esta pagina funciona
-        como o fio narrativo que ajuda a plateia a sentir o jogo, nao apenas observa-lo.
+      <div class="quote-block">
+        Se a demo estiver aberta ao lado desta apresentação, esta página funciona como o fio narrativo que ajuda a plateia a <strong>sentir</strong> o jogo, não apenas observá-lo.
       </div>
     </section>
 
-    <p class="footer">
-      Abra no navegador: <code>Docs/apresentacao-jogo.html</code>
-    </p>
   </main>
+
+  <p class="footer">Ctrl+Alt+Delas · Connect Byte × AWS · 2026</p>
+
 </body>
 </html>

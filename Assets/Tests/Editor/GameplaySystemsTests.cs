@@ -58,6 +58,11 @@ public class GameplaySystemsTests
         manager.OnItemCollected(CollectibleType.PenDrive);
         Assert.AreEqual(1, manager.CollectedRequiredCount);
         Assert.IsFalse(manager.AllRequiredCollected);
+
+        manager.OnItemCollected(CollectibleType.DataCore);
+        Assert.AreEqual(2, manager.CollectedRequiredCount);
+        Assert.IsTrue(manager.AllRequiredCollected);
+        Assert.IsFalse(manager.HasGameEnded);
     }
 
     [Test]
@@ -129,6 +134,8 @@ public class GameplaySystemsTests
         Assert.IsNotNull(Object.FindFirstObjectByType<GameManager>());
         Assert.IsNotNull(Object.FindFirstObjectByType<HUDManager>());
         Assert.IsNotNull(GameObject.Find("ScoreText"));
+        Assert.IsNotNull(GameObject.Find("TimerText"));
+        Assert.IsNotNull(GameObject.Find("StatusText"));
         Assert.IsNotNull(player.GetComponent<HealthSystem>());
     }
 

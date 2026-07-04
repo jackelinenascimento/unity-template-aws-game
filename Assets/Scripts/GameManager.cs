@@ -39,6 +39,10 @@ public class GameManager : MonoBehaviour
     [Tooltip("Subtexto opcional do painel final.")]
     [SerializeField] private TMP_Text resultBodyText;
 
+    [Header("Ritmo da fase")]
+    [Tooltip("Tempo total antes da limpeza do sistema deletar o Blink.")]
+    [SerializeField] private float levelDurationSeconds = 120f;
+
     // ----------------------------------------------------------------
     // Privado
     // ----------------------------------------------------------------
@@ -46,14 +50,20 @@ public class GameManager : MonoBehaviour
     private int _collectedCount;
     private bool _configuredAtRuntime;
     private bool _hasGameEnded;
+    private float _remainingTimeSeconds;
 
     public event Action<int, int> RequiredCollectiblesChanged;
     public event Action<bool> GameEnded;
+    public event Action<float, float> CountdownChanged;
+    public event Action<bool> MainframeStateChanged;
 
     public int TotalRequiredCollectibles => _totalCollectibles;
     public int CollectedRequiredCount => _collectedCount;
     public bool AllRequiredCollected => _totalCollectibles <= 0 || _collectedCount >= _totalCollectibles;
     public bool HasGameEnded => _hasGameEnded;
+    public float TotalTimeSeconds => levelDurationSeconds;
+    public float RemainingTimeSeconds => _remainingTimeSeconds;
+    public bool PortalUnlocked => AllRequiredCollected;
 
     // ----------------------------------------------------------------
     // Unity lifecycle
@@ -71,6 +81,11 @@ public class GameManager : MonoBehaviour
         // Garante que configurações aplicadas por bootstrap em runtime também sejam refletidas.
         if (_configuredAtRuntime)
             RebuildSceneState();
+    }
+
+    private void Update()
+    {
+        TickCountdown(Time.deltaTime);
     }
 
     private void OnDestroy()
@@ -105,7 +120,10 @@ public class GameManager : MonoBehaviour
         RequiredCollectiblesChanged?.Invoke(_collectedCount, _totalCollectibles);
 
         if (_totalCollectibles > 0 && _collectedCount >= _totalCollectibles)
-            ShowEndState(true, "ESCAPOU!", "Todos os Data Cores foram coletados.");
+        {
+            MainframeStateChanged?.Invoke(true);
+            Debug.Log("[GameManager] Mainframe hackeado. Portal de fuga liberado.");
+        }
     }
 
     /// <summary>Reinicia a cena atual.</summary>
@@ -240,8 +258,23 @@ public class GameManager : MonoBehaviour
         if (resultTitleText == null && gameOverPanel != null)
             resultTitleText = gameOverPanel.GetComponentInChildren<TMP_Text>(true);
 
+        _remainingTimeSeconds = Mathf.Max(1f, levelDurationSeconds);
         _hasGameEnded = false;
         RefreshHud();
         RequiredCollectiblesChanged?.Invoke(_collectedCount, _totalCollectibles);
+        CountdownChanged?.Invoke(_remainingTimeSeconds, levelDurationSeconds);
+        MainframeStateChanged?.Invoke(AllRequiredCollected);
+    }
+
+    private void TickCountdown(float deltaTime)
+    {
+        if (_hasGameEnded || deltaTime <= 0f)
+            return;
+
+        _remainingTimeSeconds = Mathf.Max(0f, _remainingTimeSeconds - deltaTime);
+        CountdownChanged?.Invoke(_remainingTimeSeconds, levelDurationSeconds);
+
+        if (_remainingTimeSeconds <= 0f)
+            ShowEndState(false, "LIMPEZA INICIADA", "O sistema foi limpo antes de Blink escapar.");
     }
 }

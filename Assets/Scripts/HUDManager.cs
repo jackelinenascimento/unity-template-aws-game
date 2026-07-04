@@ -12,6 +12,8 @@ public class HUDManager : MonoBehaviour
 
     [Header("Score")]
     [SerializeField] private TMP_Text scoreText;
+    [SerializeField] private TMP_Text timerText;
+    [SerializeField] private TMP_Text statusText;
 
     [Header("Polvinas")]
     [SerializeField] private Transform heartsContainer;
@@ -28,7 +30,12 @@ public class HUDManager : MonoBehaviour
         Instance = this;
     }
 
-    public void Configure(Sprite icon, TMP_Text scoreOverride = null, Transform heartsParent = null)
+    public void Configure(
+        Sprite icon,
+        TMP_Text scoreOverride = null,
+        Transform heartsParent = null,
+        TMP_Text timerOverride = null,
+        TMP_Text statusOverride = null)
     {
         if (icon != null)
             polvinaIcon = icon;
@@ -38,6 +45,12 @@ public class HUDManager : MonoBehaviour
 
         if (heartsParent != null)
             heartsContainer = heartsParent;
+
+        if (timerOverride != null)
+            timerText = timerOverride;
+
+        if (statusOverride != null)
+            statusText = statusOverride;
     }
 
     public void Bind(HealthSystem healthSystem, GameManager gameManager)
@@ -46,7 +59,11 @@ public class HUDManager : MonoBehaviour
             _healthSystem.LivesChanged -= OnLivesChanged;
 
         if (_gameManager != null)
+        {
             _gameManager.RequiredCollectiblesChanged -= OnScoreChanged;
+            _gameManager.CountdownChanged -= OnCountdownChanged;
+            _gameManager.MainframeStateChanged -= OnMainframeStateChanged;
+        }
 
         _healthSystem = healthSystem;
         _gameManager = gameManager;
@@ -62,8 +79,12 @@ public class HUDManager : MonoBehaviour
         if (_gameManager != null)
         {
             _gameManager.RequiredCollectiblesChanged += OnScoreChanged;
+            _gameManager.CountdownChanged += OnCountdownChanged;
+            _gameManager.MainframeStateChanged += OnMainframeStateChanged;
             EnsureScoreText();
             OnScoreChanged(_gameManager.CollectedRequiredCount, _gameManager.TotalRequiredCollectibles);
+            OnCountdownChanged(_gameManager.RemainingTimeSeconds, _gameManager.TotalTimeSeconds);
+            OnMainframeStateChanged(_gameManager.PortalUnlocked);
         }
     }
 
@@ -76,7 +97,11 @@ public class HUDManager : MonoBehaviour
             _healthSystem.LivesChanged -= OnLivesChanged;
 
         if (_gameManager != null)
+        {
             _gameManager.RequiredCollectiblesChanged -= OnScoreChanged;
+            _gameManager.CountdownChanged -= OnCountdownChanged;
+            _gameManager.MainframeStateChanged -= OnMainframeStateChanged;
+        }
     }
 
     private void OnLivesChanged(int currentLives, int maxLives)
@@ -95,12 +120,71 @@ public class HUDManager : MonoBehaviour
             scoreText.text = $"Data Cores: {current}/{total}";
     }
 
+    private void OnCountdownChanged(float remainingSeconds, float totalSeconds)
+    {
+        EnsureTimerText();
+        if (timerText == null)
+            return;
+
+        int total = Mathf.CeilToInt(Mathf.Max(0f, remainingSeconds));
+        int minutes = total / 60;
+        int seconds = total % 60;
+        timerText.text = $"Limpeza: {minutes:00}:{seconds:00}";
+        timerText.color = remainingSeconds <= 20f ? new Color(1f, 0.45f, 0.45f) : Color.white;
+    }
+
+    private void OnMainframeStateChanged(bool unlocked)
+    {
+        EnsureStatusText();
+        if (statusText == null)
+            return;
+
+        statusText.text = unlocked
+            ? "Mainframe hackeado • Portal liberado"
+            : "Mainframe bloqueado • Colete todos os Data Cores";
+        statusText.color = unlocked
+            ? new Color(0.45f, 1f, 0.76f)
+            : new Color(0.36f, 0.93f, 1f);
+    }
+
     private void EnsureScoreText()
     {
         if (scoreText != null)
             return;
 
         scoreText = FindFirstObjectByType<TMP_Text>();
+    }
+
+    private void EnsureTimerText()
+    {
+        if (timerText != null)
+            return;
+
+        TMP_Text[] texts = FindObjectsByType<TMP_Text>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (TMP_Text text in texts)
+        {
+            if (text != null && text.gameObject.name == "TimerText")
+            {
+                timerText = text;
+                return;
+            }
+        }
+    }
+
+    private void EnsureStatusText()
+    {
+        if (statusText != null)
+            return;
+
+        TMP_Text[] texts = FindObjectsByType<TMP_Text>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (TMP_Text text in texts)
+        {
+            if (text != null && text.gameObject.name == "StatusText")
+            {
+                statusText = text;
+                return;
+            }
+        }
     }
 
     private void EnsureHeartsContainer()

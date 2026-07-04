@@ -2767,6 +2767,7 @@ MonoBehaviour:
   droneSprite: {fileID: 21300000, guid: d836a18b419140d79f513b4048fdced1, type: 3}
   acidSprite: {fileID: 21300000, guid: c2cacd27d3f34a5eaae8ae08bf4eae07, type: 3}
   laboratoryBackdropPrefab: {fileID: 100100000, guid: c9909498b5bbb45edb34263a32520dbc, type: 3}
+  groundLayoutPrefab: {fileID: 100100000, guid: 4a3066ea264db4146a7c00421f811bd5, type: 3}
   gameOverPanel: {fileID: 57791089}
 --- !u!4 &1228493758
 Transform:
