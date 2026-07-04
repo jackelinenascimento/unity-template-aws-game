@@ -142,7 +142,4 @@ credentials.*
 # ===========================
 crashlytics-build.properties
 
-# ===========================
-# Docs geradas
-# ===========================
-Docs/imgs/
+
