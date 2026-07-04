@@ -2,6 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
+using System;
 
 /// <summary>
 /// Consolida a cena em runtime quando o template ainda não foi completamente montado no Editor.
@@ -221,8 +222,10 @@ public class SceneAutoSetup : MonoBehaviour
     private void EnsureCollectibles()
     {
         Collectible[] existing = FindObjectsByType<Collectible>(FindObjectsSortMode.None);
+        Array.Sort(existing, CompareCollectiblesForSetup);
+
         for (int i = 0; i < existing.Length && i < CollectibleTypes.Length; i++)
-            existing[i].SetType(CollectibleTypes[i]);
+            ApplyCollectibleDefinition(existing[i], i);
 
         for (int i = existing.Length; i < CollectiblePositions.Length; i++)
             CreateCollectible(i, CollectiblePositions[i]);
@@ -337,21 +340,13 @@ public class SceneAutoSetup : MonoBehaviour
 
     private void CreateCollectible(int index, Vector3 position)
     {
-        CollectibleType type = CollectibleTypes[index];
-        GameObject item = new GameObject(GetCollectibleName(index, type), typeof(SpriteRenderer), typeof(CircleCollider2D), typeof(Collectible));
+        GameObject item = new GameObject("Collectible", typeof(SpriteRenderer), typeof(CircleCollider2D), typeof(Collectible));
         item.transform.position = position;
-        item.transform.localScale = type == CollectibleType.Polvina ? new Vector3(0.9f, 0.9f, 1f) : new Vector3(0.72f, 0.72f, 1f);
-
-        SpriteRenderer renderer = item.GetComponent<SpriteRenderer>();
-        renderer.sprite = GetCollectibleSprite(type);
-        renderer.sortingOrder = 8;
+        ApplyCollectibleDefinition(item.GetComponent<Collectible>(), index);
 
         CircleCollider2D collider = item.GetComponent<CircleCollider2D>();
         collider.isTrigger = true;
         collider.radius = 0.45f;
-
-        Collectible collectible = item.GetComponent<Collectible>();
-        collectible.SetType(type);
     }
 
     private void CreateObstacle(int index)
@@ -399,6 +394,46 @@ public class SceneAutoSetup : MonoBehaviour
             CollectibleType.Polvina => $"Polvina_{index + 1:00}",
             _ => $"DataCore_{index + 1:00}"
         };
+    }
+
+    private void ApplyCollectibleDefinition(Collectible collectible, int index)
+    {
+        if (collectible == null)
+            return;
+
+        CollectibleType type = CollectibleTypes[index];
+        collectible.SetType(type);
+        collectible.gameObject.name = GetCollectibleName(index, type);
+        collectible.transform.localScale = type == CollectibleType.Polvina
+            ? new Vector3(0.9f, 0.9f, 1f)
+            : new Vector3(0.72f, 0.72f, 1f);
+
+        SpriteRenderer renderer = collectible.GetComponent<SpriteRenderer>();
+        if (renderer != null)
+        {
+            renderer.sprite = GetCollectibleSprite(type);
+            renderer.sortingOrder = 8;
+        }
+    }
+
+    private static int CompareCollectiblesForSetup(Collectible left, Collectible right)
+    {
+        if (left == right)
+            return 0;
+        if (left == null)
+            return 1;
+        if (right == null)
+            return -1;
+
+        int byX = left.transform.position.x.CompareTo(right.transform.position.x);
+        if (byX != 0)
+            return byX;
+
+        int byY = left.transform.position.y.CompareTo(right.transform.position.y);
+        if (byY != 0)
+            return byY;
+
+        return string.CompareOrdinal(left.gameObject.name, right.gameObject.name);
     }
 
     private Sprite GetCollectibleSprite(CollectibleType type)

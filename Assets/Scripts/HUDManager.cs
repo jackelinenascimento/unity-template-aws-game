@@ -156,7 +156,7 @@ public class HUDManager : MonoBehaviour
 
         statusText.text = unlocked
             ? "Mainframe hackeado • Portal liberado"
-            : "Mainframe bloqueado • Colete todos os Data Cores";
+            : "Mainframe bloqueado • Colete todos os itens de hack";
         statusText.color = unlocked
             ? new Color(0.45f, 1f, 0.76f)
             : new Color(0.36f, 0.93f, 1f);

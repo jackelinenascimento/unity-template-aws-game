@@ -124,7 +124,15 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        _collectedByType[type] = Mathf.Min(GetCollectedCount(type) + 1, GetRequiredCount(type));
+        int currentByType = GetCollectedCount(type);
+        int requiredByType = GetRequiredCount(type);
+        if (currentByType >= requiredByType)
+        {
+            RequiredCollectiblesChanged?.Invoke(_collectedCount, _totalCollectibles);
+            return;
+        }
+
+        _collectedByType[type] = currentByType + 1;
         _collectedCount = Mathf.Min(_collectedCount + 1, _totalCollectibles);
         RefreshHud();
         RequiredCollectiblesChanged?.Invoke(_collectedCount, _totalCollectibles);

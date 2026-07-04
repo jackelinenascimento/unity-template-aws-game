@@ -71,6 +71,27 @@ public class GameplaySystemsTests
     }
 
     [Test]
+    public void GameManager_DoesNotAdvanceWhenCollectingExtraItemOfSameType()
+    {
+        GameObject managerObject = CreateRoot("GameManager");
+        GameManager manager = managerObject.AddComponent<GameManager>();
+
+        CreateCollectible("Pendrive", CollectibleType.PenDrive);
+        CreateCollectible("DataCore", CollectibleType.DataCore);
+
+        InvokePrivate(manager, "Awake");
+        manager.RefreshSceneState();
+
+        manager.OnItemCollected(CollectibleType.DataCore);
+        manager.OnItemCollected(CollectibleType.DataCore);
+
+        Assert.AreEqual(1, manager.CollectedRequiredCount);
+        Assert.IsFalse(manager.AllRequiredCollected);
+        Assert.AreEqual(1, manager.GetCollectedCount(CollectibleType.DataCore));
+        Assert.AreEqual(0, manager.GetCollectedCount(CollectibleType.PenDrive));
+    }
+
+    [Test]
     public void HealthSystem_ClampsLivesAndTriggersDeath()
     {
         GameObject player = CreateRoot("Player");
@@ -144,6 +165,51 @@ public class GameplaySystemsTests
         Assert.IsNotNull(player.GetComponent<HealthSystem>());
     }
 
+    [Test]
+    public void SceneAutoSetup_AssignsCollectibleTypesDeterministicallyByPosition()
+    {
+        GameObject canvasObject = CreateRoot("Canvas");
+        canvasObject.AddComponent<Canvas>();
+        canvasObject.AddComponent<CanvasScaler>();
+        canvasObject.AddComponent<GraphicRaycaster>();
+
+        GameObject player = CreateRoot("Player");
+        player.tag = "Player";
+        player.AddComponent<SpriteRenderer>();
+        player.AddComponent<Rigidbody2D>();
+        player.AddComponent<Animator>();
+        player.AddComponent<HealthSystem>();
+        player.AddComponent<PlayerController>();
+
+        CreateCollectibleAt("RightItem", new Vector3(30f, 0f, 0f));
+        CreateCollectibleAt("LeftItem", new Vector3(10f, 0f, 0f));
+        CreateCollectibleAt("MiddleItem", new Vector3(20f, 0f, 0f));
+
+        GameObject setupObject = CreateRoot("SceneSetup");
+        SceneAutoSetup setup = setupObject.AddComponent<SceneAutoSetup>();
+        SetPrivateField(setup, "collectibleSprite", CreateSprite(Color.cyan));
+        SetPrivateField(setup, "penDriveSprite", CreateSprite(Color.blue));
+        SetPrivateField(setup, "dataCoreSprite", CreateSprite(Color.green));
+        SetPrivateField(setup, "polvinaSprite", CreateSprite(Color.magenta));
+        SetPrivateField(setup, "laserSprite", CreateSprite(Color.red));
+        SetPrivateField(setup, "droneSprite", CreateSprite(Color.gray));
+        SetPrivateField(setup, "acidSprite", CreateSprite(Color.yellow));
+
+        InvokePrivate(setup, "Awake");
+
+        Collectible[] collectibles = Object.FindObjectsByType<Collectible>(FindObjectsSortMode.None);
+        Collectible leftmost = FindCollectibleByNamePrefix(collectibles, "PenDrive");
+        Collectible middle = FindCollectibleByNamePrefix(collectibles, "DataCore_02");
+        Collectible rightmost = FindCollectibleByNamePrefix(collectibles, "DataCore_03");
+
+        Assert.IsNotNull(leftmost);
+        Assert.IsNotNull(middle);
+        Assert.IsNotNull(rightmost);
+        Assert.AreEqual(CollectibleType.PenDrive, leftmost.Type);
+        Assert.AreEqual(CollectibleType.DataCore, middle.Type);
+        Assert.AreEqual(CollectibleType.DataCore, rightmost.Type);
+    }
+
     private GameObject CreateRoot(string name)
     {
         GameObject root = new GameObject(name);
@@ -154,9 +220,28 @@ public class GameplaySystemsTests
     private Collectible CreateCollectible(string name, CollectibleType type)
     {
         GameObject collectibleObject = CreateRoot(name);
+        collectibleObject.AddComponent<SpriteRenderer>();
         Collectible collectible = collectibleObject.AddComponent<Collectible>();
         collectible.SetType(type);
         return collectible;
+    }
+
+    private Collectible CreateCollectibleAt(string name, Vector3 position)
+    {
+        Collectible collectible = CreateCollectible(name, CollectibleType.DataCore);
+        collectible.transform.position = position;
+        return collectible;
+    }
+
+    private static Collectible FindCollectibleByNamePrefix(Collectible[] collectibles, string prefix)
+    {
+        foreach (Collectible collectible in collectibles)
+        {
+            if (collectible != null && collectible.gameObject.name.StartsWith(prefix))
+                return collectible;
+        }
+
+        return null;
     }
 
     private static void InvokePrivate(object target, string methodName)
