@@ -205,3 +205,307 @@
     }
   </style>
 </head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">Ecto-Escape · Análise Local</div>
+      <nav class="nav">
+        <a href="#visao">Visão</a>
+        <a href="#estado">Estado Atual</a>
+        <a href="#divergencias">Pendências</a>
+        <a href="#riscos">Riscos</a>
+        <a href="#acoes">Próximos Passos</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ── HERO ──────────────────────────────────────────────── -->
+    <section class="hero" id="visao">
+      <div class="eyebrow fade-up">Status · Repositório · 04 de julho de 2026</div>
+      <h1 class="fade-up-2">Ecto-Escape:<br>prontidão de execução</h1>
+      <p class="fade-up-3" style="max-width:62ch;color:var(--muted);line-height:1.7;margin-bottom:0">
+        Resumo da proposta, estado atual do repositório, o que está fechado em código
+        e o que ainda depende de validação no Unity Editor e no hardware real.
+      </p>
+
+      <div class="hero-grid fade-up-3">
+        <div class="glass-panel">
+          <h3>Leitura-base usada</h3>
+          <ul>
+            <li><code>README.md</code> + <code>Docs/storytelling/Ecto-Escape.md</code></li>
+            <li><code>.kiro/specs/game-geral/requirements.md</code></li>
+            <li><code>.kiro/specs/game-geral/design.md</code></li>
+            <li><code>.kiro/specs/game-geral/tasks.md</code></li>
+            <li><code>Assets/Scripts/*.cs</code> + <code>Assets/Scenes/*.unity</code></li>
+          </ul>
+        </div>
+        <div class="glass-panel">
+          <h3>Status rápido</h3>
+          <ul>
+            <li>Proposta clara e bem estruturada.</li>
+            <li>Núcleo de gameplay C# fechado: score, vidas, dano, vitória/derrota.</li>
+            <li>HUD, obstáculos, firmware base e testes automatizados no repositório.</li>
+            <li>Cena demo se auto-configura em runtime com cenário, chão, HUD e obstáculos quando o setup mínimo estiver ausente.</li>
+            <li>A história agora aparece melhor no loop: timer da limpeza, hack do mainframe e portal liberado por Data Cores.</li>
+            <li>Projeto pronto para abrir no Unity com fallback de teclado real, sem depender do ESP32 conectado.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── STATS ─────────────────────────────────────────────── -->
+    <section>
+      <div class="stats">
+        <div class="stat">
+          <strong>11</strong>
+          <span>scripts de gameplay em <code>Assets/Scripts</code></span>
+        </div>
+        <div class="stat">
+          <strong>1</strong>
+          <span>cena no Build Settings: <code>Ecto-Scape</code></span>
+        </div>
+        <div class="stat">
+          <strong>3</strong>
+          <span>pilares fechados: gameplay narrativo, hardware base e testes automatizados</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PROPOSTA ───────────────────────────────────────────── -->
+    <section id="proposta">
+      <h2>Resumo da proposta</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Pitch do jogo</h3>
+          <p><strong>Blink</strong>, um fantasminha digital, precisa coletar <strong>Data Cores</strong> num laboratório sci-fi para hackear o mainframe e escapar antes de ser deletado.</p>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px">
+            <span style="padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-size:.88rem">Platformer 2D</span>
+            <span style="padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-size:.88rem">Unity 6</span>
+            <span style="padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-size:.88rem">ESP32 + OLED</span>
+            <span style="padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);font-size:.88rem">Evento 1 dia</span>
+          </div>
+        </div>
+        <div class="card">
+          <h3>Diferencial</h3>
+          <p>O Unity envia reações para o ESP32, que devolve comandos de controle. O OLED funciona como extensão emocional do personagem — a plateia vê Blink reagir ao vivo.</p>
+        </div>
+      </div>
+
+      <table>
+        <thead><tr><th>Área</th><th>Esperado</th><th>Fonte</th></tr></thead>
+        <tbody>
+          <tr><td>Gameplay</td><td>Andar, pular, coletar 3 itens, hackear o mainframe, liberar o portal e escapar antes da limpeza</td><td><code>README</code>, RF-01 a RF-04</td></tr>
+          <tr><td>Hardware</td><td>ESP32 com OLED lendo <code>I/T/D</code> e enviando <code>L1/L0/R1/R0/U</code></td><td>RF-05, RF-06</td></tr>
+          <tr><td>Visual</td><td>Laboratório futurista, Blink, Data Cores, laser, drone, ácido</td><td>storytelling + design</td></tr>
+          <tr><td>UX</td><td>HUD com contagem de coletáveis, status do mainframe, timer da limpeza e painel final</td><td>RF-07</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ── PROGRESSO POR ÁREA ─────────────────────────────────── -->
+    <section id="estado">
+      <h2>Progresso por área</h2>
+      <div class="prog-list">
+        <div class="prog-item">
+          <h3>Scripts de gameplay <span>11/11 — completo</span></h3>
+          <div class="prog-track"><div class="prog-bar green" style="width:100%"></div></div>
+        </div>
+        <div class="prog-item">
+          <h3>Firmware ESP32 <span>versão base versionada</span></h3>
+          <div class="prog-track"><div class="prog-bar cyan" style="width:85%"></div></div>
+        </div>
+        <div class="prog-item">
+          <h3>Testes automatizados <span>regras centrais cobertas</span></h3>
+          <div class="prog-track"><div class="prog-bar amber" style="width:60%"></div></div>
+        </div>
+        <div class="prog-item">
+          <h3>Validação em runtime no Unity Editor <span>pendente</span></h3>
+          <div class="prog-track"><div class="prog-bar rose" style="width:20%"></div></div>
+        </div>
+        <div class="prog-item">
+          <h3>Validação no hardware real (ESP32 + OLED) <span>pendente</span></h3>
+          <div class="prog-track"><div class="prog-bar rose" style="width:15%"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ESTADO DETALHADO ───────────────────────────────────── -->
+    <section>
+      <h2>Estado detalhado do repositório</h2>
+      <div class="grid-3">
+        <div class="card">
+          <span class="badge ok">Implementado</span>
+          <ul style="margin-top:14px">
+            <li><code>PlayerController.cs</code> com fallback automático quando o ESP32 não conecta</li>
+            <li><code>ESP32SerialReader.cs</code> com thread + fila <code>I/T/D</code></li>
+            <li><code>Collectible</code>, <code>GameManager</code>, <code>LevelEnd</code>, <code>DamageZone</code>, <code>Obstacle</code></li>
+            <li><code>MovingPlatform.cs</code> funcional</li>
+            <li>Firmware em <code>Docs/Hardware/esp32-oled.ino</code></li>
+            <li><code>HealthSystem.cs</code>, <code>HUDManager.cs</code> e HUD narrativa</li>
+            <li>Testes em <code>Assets/Tests/Editor</code></li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="badge warn">Parcial</span>
+          <ul style="margin-top:14px">
+            <li>Assets visuais existem, consolidação final ainda é manual no Editor</li>
+            <li>Bootstrap já usa cenário e chão do projeto, mas montagem autoral da fase ainda é desejável</li>
+            <li>Refinamento visual e de layout ainda dependem do Unity</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="badge risk">Pendente</span>
+          <ul style="margin-top:14px">
+            <li>Validação integral em runtime no Unity Editor não executada nesta auditoria</li>
+            <li>Validação no hardware real do ESP32 + OLED ainda pendente</li>
+          </ul>
+        </div>
+      </div>
+
+      <table>
+        <thead><tr><th>Componente</th><th>Evidência local</th><th>Leitura</th></tr></thead>
+        <tbody>
+          <tr><td>Scripts</td><td>11 scripts em <code>Assets/Scripts/</code></td><td class="ok-cell">Base coesa e completa</td></tr>
+          <tr><td>Testes</td><td><code>Assets/Tests/Editor/GameplaySystemsTests.cs</code></td><td class="ok-cell">Regras centrais têm cobertura inicial</td></tr>
+          <tr><td>Prontidão Unix</td><td>Fallback de teclado, serial graciosa, auto-setup</td><td class="ok-cell">Abre e roda sem ESP32 conectado</td></tr>
+          <tr><td>Documentação</td><td><code>Docs/</code> + <code>.kiro/specs/</code></td><td class="ok-cell">Excelente para onboarding</td></tr>
+          <tr><td>Cena jogável</td><td><code>Ecto-Scape.unity</code> com Player, ESP32, HUD, LevelEnd, cenário e chão automáticos</td><td class="ok-cell">Referência oficial de demo</td></tr>
+          <tr><td>Build Settings</td><td><code>Ecto-Scape.unity</code> única cena listada</td><td class="ok-cell">Fluxo sem ambiguidade</td></tr>
+          <tr><td>Runtime Unity</td><td>Não validado nesta auditoria</td><td class="risk-cell">Ainda pendente</td></tr>
+          <tr><td>Hardware real</td><td>Não validado nesta auditoria</td><td class="risk-cell">Ainda pendente</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ── DIVERGÊNCIAS ───────────────────────────────────────── -->
+    <section id="divergencias">
+      <h2>Fechamento das divergências</h2>
+      <table>
+        <thead><tr><th>Divergência</th><th>Esperado</th><th>Resolvido com</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Cena principal</td>
+            <td>Uma única cena clara como referência</td>
+            <td><code>Ecto-Scape.unity</code> é a única no Build Settings</td>
+            <td class="ok-cell">Resolvido</td>
+          </tr>
+          <tr>
+            <td>HUD obrigatória (RF-07)</td>
+            <td>Contagem visível de Data Cores</td>
+            <td><code>GameManager</code> + <code>SceneAutoSetup</code> criam HUD com score, timer e status do mainframe</td>
+            <td class="ok-cell">Resolvido</td>
+          </tr>
+          <tr>
+            <td>3 obstáculos</td>
+            <td>Trigger + envio de dano</td>
+            <td><code>Obstacle.cs</code> + <code>SceneAutoSetup</code> instancia os 3 mínimos</td>
+            <td class="warn-cell">Funcional; acabamento visual pode melhorar</td>
+          </tr>
+          <tr>
+            <td>Firmware versionado</td>
+            <td>ESP32 na entrega técnica</td>
+            <td><code>Docs/Hardware/esp32-oled.ino</code></td>
+            <td class="ok-cell">Resolvido</td>
+          </tr>
+          <tr>
+            <td>Sistema de vidas</td>
+            <td>Opcional no prompt original</td>
+            <td><code>HealthSystem.cs</code> + <code>HUDManager.cs</code> na base</td>
+            <td class="ok-cell">Resolvido</td>
+          </tr>
+          <tr>
+            <td>História na gameplay</td>
+            <td>Portal deveria liberar só após o hack e a limpeza deveria gerar urgência</td>
+            <td><code>GameManager</code> agora usa timer de limpeza e libera o portal apenas após os Data Cores</td>
+            <td class="ok-cell">Resolvido</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ── O QUE ESTÁ BOM ─────────────────────────────────────── -->
+    <section>
+      <h2>O que está forte no projeto</h2>
+      <div class="tag-cloud">
+        <span>Escopo enxuto para hackathon</span>
+        <span>Narrativa clara e memorável</span>
+        <span>Hardware + software integrados</span>
+        <span>Documentação pedagógica excepcional</span>
+        <span>Código legível e comentado</span>
+        <span>Fallback sem ESP32</span>
+        <span>Timer da limpeza do sistema</span>
+        <span>Portal liberado por hack</span>
+        <span>Fluxo central fácil de explicar</span>
+        <span>Assets organizados por categoria</span>
+        <span>Spec técnica completa</span>
+        <span>Testes automatizados na base</span>
+      </div>
+      <p class="foot">
+        A base conceitual está sólida. As divergências estruturais foram resolvidas. O trabalho restante está concentrado em acabamento final e validação no Unity/hardware real.
+      </p>
+    </section>
+
+    <!-- ── RISCOS ─────────────────────────────────────────────── -->
+    <section id="riscos">
+      <h2>Riscos principais</h2>
+      <div class="grid-3">
+        <div class="callout">
+          <span class="badge risk">Risco 1</span>
+          <p style="margin-top:14px">
+            A base funcional está pronta, mas existe espaço para substituir partes do bootstrap por uma montagem 100% manual no layout final da cena.
+          </p>
+        </div>
+        <div class="callout">
+          <span class="badge risk">Risco 2</span>
+          <p style="margin-top:14px">
+            O bootstrap agora cobre cenário e chão, mas a fase ainda ganha ao ter um layout mais intencional quando aberta no Unity Editor.
+          </p>
+        </div>
+        <div class="callout">
+          <span class="badge risk">Risco 3</span>
+          <p style="margin-top:14px">
+            Os testes cobrem regras centrais, mas falta validar tudo em runtime no Unity Editor e no hardware real antes da demo.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PRÓXIMOS PASSOS ────────────────────────────────────── -->
+    <section id="acoes">
+      <h2>Próximos passos</h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Validação</h3>
+          <ol style="padding-left:18px;color:var(--muted);line-height:1.8">
+            <li>Abrir <code>Ecto-Scape.unity</code> no Unity e validar o loop completo com teclado.</li>
+            <li>Subir o firmware no ESP32 e validar o protocolo serial em hardware real.</li>
+            <li>Executar a suite de testes pelo Unity Test Runner e registrar resultado.</li>
+            <li>Declarar no README o que está pronto e o que ainda é opcional.</li>
+          </ol>
+        </div>
+        <div class="card">
+          <h3>Acabamento</h3>
+          <ol style="padding-left:18px;color:var(--muted);line-height:1.8">
+            <li>Substituir objetos auto-criados por versões posicionadas manualmente.</li>
+            <li>Refinar a identidade visual dos 3 obstáculos temáticos.</li>
+            <li>Consolidar uma cena demonstrável única para onboarding e entrega.</li>
+            <li>Expandir a suite de testes para portal, timer da limpeza e HUD narrativa.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="quote">
+        <strong>Resumo executivo:</strong> a proposta é forte, e o jogo já reflete melhor a própria história: Blink coleta Data Cores para hackear o mainframe, o portal só libera depois disso e a limpeza do sistema impõe urgência real. Para o Unity, a base está pronta para abrir e jogar com fallback de teclado; o trabalho restante está concentrado em acabamento final e validação no Unity/hardware real.
+      </div>
+      <p class="foot" style="font-size:.82rem">
+        Status baseado em leitura local do repositório. Sem execução do Unity Editor nem validação de comportamento em runtime.
+      </p>
+    </section>
+
+  </main>
+
+</body>
+</html>

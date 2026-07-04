@@ -12,6 +12,8 @@ public class SceneAutoSetup : MonoBehaviour
 {
     [Header("Sprites")]
     [SerializeField] private Sprite collectibleSprite;
+    [SerializeField] private Sprite penDriveSprite;
+    [SerializeField] private Sprite dataCoreSprite;
     [SerializeField] private Sprite polvinaSprite;
     [SerializeField] private Sprite laserSprite;
     [SerializeField] private Sprite droneSprite;
@@ -53,6 +55,7 @@ public class SceneAutoSetup : MonoBehaviour
 
     private void Awake()
     {
+        ResolveDefaultSprites();
         EnsureEnvironmentArt();
         EnsurePlayableDefaults();
         TMP_Text scoreText = EnsureHud();
@@ -63,6 +66,18 @@ public class SceneAutoSetup : MonoBehaviour
         EnsureObstacles();
         EnsureGameManager(scoreText);
         EnsureHudManager(scoreText, timerText, statusText, healthSystem);
+    }
+
+    private void ResolveDefaultSprites()
+    {
+        if (penDriveSprite == null)
+            penDriveSprite = Resources.Load<Sprite>("Sprites/drive");
+
+        if (dataCoreSprite == null)
+            dataCoreSprite = Resources.Load<Sprite>("Sprites/chip");
+
+        if (collectibleSprite == null)
+            collectibleSprite = dataCoreSprite != null ? dataCoreSprite : Resources.Load<Sprite>("Sprites/chipdrive");
     }
 
     private void EnsureEnvironmentArt()
@@ -328,7 +343,7 @@ public class SceneAutoSetup : MonoBehaviour
         item.transform.localScale = type == CollectibleType.Polvina ? new Vector3(0.9f, 0.9f, 1f) : new Vector3(0.72f, 0.72f, 1f);
 
         SpriteRenderer renderer = item.GetComponent<SpriteRenderer>();
-        renderer.sprite = type == CollectibleType.Polvina ? polvinaSprite : collectibleSprite;
+        renderer.sprite = GetCollectibleSprite(type);
         renderer.sortingOrder = 8;
 
         CircleCollider2D collider = item.GetComponent<CircleCollider2D>();
@@ -383,6 +398,16 @@ public class SceneAutoSetup : MonoBehaviour
             CollectibleType.PenDrive => $"PenDrive_{index + 1:00}",
             CollectibleType.Polvina => $"Polvina_{index + 1:00}",
             _ => $"DataCore_{index + 1:00}"
+        };
+    }
+
+    private Sprite GetCollectibleSprite(CollectibleType type)
+    {
+        return type switch
+        {
+            CollectibleType.PenDrive => penDriveSprite != null ? penDriveSprite : collectibleSprite,
+            CollectibleType.Polvina => polvinaSprite,
+            _ => dataCoreSprite != null ? dataCoreSprite : collectibleSprite
         };
     }
 

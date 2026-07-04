@@ -13,7 +13,7 @@ Código C# do jogo. Todos os scripts estão prontos e funcionando — **não ree
 | `GameManager.cs` | Conta Data Cores, exibe vitória | ✅ |
 | `Collectible.cs` | Lógica de cada Data Core coletável | não |
 | `HealthSystem.cs` | Vidas do Blink, invencibilidade e morte | não |
-| `HUDManager.cs` | HUD de score e Polvinas | ✅ |
+| `HUDManager.cs` | HUD de score, timer da limpeza e Polvinas | ✅ |
 | `DamageZone.cs` | Zona genérica de dano | não |
 | `Obstacle.cs` | Trigger de dano para lasers, drones e ácido | não |
 | `LevelEnd.cs` | Portal de fuga — fim da fase | não |
@@ -162,7 +162,9 @@ health.IsInvincible;
 
 Singleton da HUD. Escuta `HealthSystem` e `GameManager` para manter:
 1. contador `Data Cores: X/Y`;
-2. fileira de Polvinas no canto da tela.
+2. timer da limpeza do sistema;
+3. status do mainframe/portal;
+4. fileira de Polvinas no canto da tela.
 
 Se a cena não estiver pronta, ele pode ser configurado pelo `SceneAutoSetup`.
 
@@ -222,11 +224,12 @@ Usa `MovePosition` (respeitando física). Gizmos cyan visíveis no Editor.
 
 Bootstrap da cena demo. Se a fase estiver incompleta, ele:
 1. força fallback de teclado no Player;
-2. cria `ScoreText` na HUD quando não existir;
+2. cria `ScoreText`, `TimerText` e `StatusText` na HUD quando não existirem;
 3. garante `HealthSystem` no Player;
 4. instancia `GameManager` e `HUDManager` quando ausentes;
 5. garante 3 itens obrigatórios + 1 Polvina;
-6. garante pelo menos 3 `Obstacle`.
+6. garante pelo menos 3 `Obstacle`;
+7. usa automaticamente `drive.png` para `PenDrive` e `chip.png` para `DataCore` quando esses arquivos estiverem em `Assets/Resources/Sprites/`.
 
 Isso reduz a divergência entre o que a documentação promete e o que a cena já vem montada no repositório.
 

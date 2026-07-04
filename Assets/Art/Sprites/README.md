@@ -9,6 +9,8 @@ Sprites dos **obstáculos e itens coletáveis** do laboratório — movidos de `
 | Arquivo | Elemento do jogo | Papel |
 |---|---|---|
 | `chipdrive.png` | **Data Core** — pen drive holográfico coletável | Item coletável |
+| `drive.png` | **PenDrive** individual | Item coletável |
+| `chip.png` | **Data Core** individual | Item coletável |
 | `laser.png` | **Laser de Segurança** — barreira vermelha | Obstáculo |
 | `poca.png` | **Ácido Fluorescente** — poça radioativa | Obstáculo |
 | `polvina.png` | **Polvina / Drone** — robô de patrulha | Obstáculo |
@@ -30,11 +32,12 @@ Para cada sprite acima:
 
 ## 🕹️ Como usar na cena
 
-### Data Core (chipdrive.png)
-1. Arraste para a **Scene**, renomeie para `DataCore_01`.
+### Coletáveis (drive.png / chip.png / chipdrive.png)
+1. Arraste para a **Scene**, renomeie para `PenDrive_01` ou `DataCore_01`.
 2. `Add Component` → **CircleCollider2D** → marque **Is Trigger**.
 3. `Add Component` → arraste o script **Collectible.cs**.
-4. Repita para `DataCore_02` e `DataCore_03`.
+4. No `Collectible.cs`, selecione o tipo correto: `PenDrive` ou `DataCore`.
+5. Repita para os demais itens.
 
 ### Obstáculos (laser, poca, polvina)
 1. Arraste para a **Scene**, renomeie (`LaserSeguranca`, `AcidoFluorescente`, `DronePatrulha`).
