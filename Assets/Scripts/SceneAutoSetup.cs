@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
 /// <summary>
@@ -15,6 +16,11 @@ public class SceneAutoSetup : MonoBehaviour
     [SerializeField] private Sprite laserSprite;
     [SerializeField] private Sprite droneSprite;
     [SerializeField] private Sprite acidSprite;
+
+    [Header("Cenario")]
+    [SerializeField] private GameObject laboratoryBackdropPrefab;
+    [SerializeField] private Vector3 backdropPosition = new Vector3(36f, 7f, 0f);
+    [SerializeField] private Vector3 backdropScale = new Vector3(3.2f, 3.2f, 1f);
 
     [Header("UI")]
     [SerializeField] private GameObject gameOverPanel;
@@ -44,6 +50,7 @@ public class SceneAutoSetup : MonoBehaviour
 
     private void Awake()
     {
+        EnsureEnvironmentArt();
         EnsurePlayableDefaults();
         TMP_Text scoreText = EnsureHud();
         HealthSystem healthSystem = EnsureHealthSystem();
@@ -51,6 +58,29 @@ public class SceneAutoSetup : MonoBehaviour
         EnsureObstacles();
         EnsureGameManager(scoreText);
         EnsureHudManager(scoreText, healthSystem);
+    }
+
+    private void EnsureEnvironmentArt()
+    {
+        if (laboratoryBackdropPrefab == null)
+            return;
+
+        if (GameObject.Find("CenarioFuturistaAuto") != null ||
+            GameObject.Find("Cenário Futurista") != null ||
+            GameObject.Find("Cenario Futurista") != null)
+        {
+            return;
+        }
+
+        GameObject backdrop = Instantiate(laboratoryBackdropPrefab, backdropPosition, Quaternion.identity);
+        backdrop.name = "CenarioFuturistaAuto";
+        backdrop.transform.localScale = backdropScale;
+
+        foreach (Collider2D collider in backdrop.GetComponentsInChildren<Collider2D>(true))
+            collider.enabled = false;
+
+        foreach (TilemapRenderer renderer in backdrop.GetComponentsInChildren<TilemapRenderer>(true))
+            renderer.sortingOrder = -20;
     }
 
     private void EnsurePlayableDefaults()
@@ -155,18 +185,21 @@ public class SceneAutoSetup : MonoBehaviour
 
     private void CreateCollectible(int index, Vector3 position)
     {
-        GameObject item = new GameObject($"DataCore_{index}", typeof(SpriteRenderer), typeof(CircleCollider2D), typeof(Collectible));
+        CollectibleType type = CollectibleTypes[index];
+        GameObject item = new GameObject(GetCollectibleName(index, type), typeof(SpriteRenderer), typeof(CircleCollider2D), typeof(Collectible));
         item.transform.position = position;
+        item.transform.localScale = type == CollectibleType.Polvina ? new Vector3(0.9f, 0.9f, 1f) : new Vector3(0.72f, 0.72f, 1f);
 
         SpriteRenderer renderer = item.GetComponent<SpriteRenderer>();
-        renderer.sprite = CollectibleTypes[index] == CollectibleType.Polvina ? polvinaSprite : collectibleSprite;
+        renderer.sprite = type == CollectibleType.Polvina ? polvinaSprite : collectibleSprite;
+        renderer.sortingOrder = 8;
 
         CircleCollider2D collider = item.GetComponent<CircleCollider2D>();
         collider.isTrigger = true;
         collider.radius = 0.45f;
 
         Collectible collectible = item.GetComponent<Collectible>();
-        collectible.SetType(CollectibleTypes[index]);
+        collectible.SetType(type);
     }
 
     private void CreateObstacle(int index)
@@ -199,10 +232,21 @@ public class SceneAutoSetup : MonoBehaviour
 
         SpriteRenderer renderer = obstacle.GetComponent<SpriteRenderer>();
         renderer.sprite = sprite;
+        renderer.sortingOrder = 7;
 
         BoxCollider2D collider = obstacle.GetComponent<BoxCollider2D>();
         collider.isTrigger = true;
         collider.size = size;
+    }
+
+    private static string GetCollectibleName(int index, CollectibleType type)
+    {
+        return type switch
+        {
+            CollectibleType.PenDrive => $"PenDrive_{index + 1:00}",
+            CollectibleType.Polvina => $"Polvina_{index + 1:00}",
+            _ => $"DataCore_{index + 1:00}"
+        };
     }
 
     private HealthSystem EnsureHealthSystem()

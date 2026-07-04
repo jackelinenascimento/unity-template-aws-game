@@ -8,12 +8,12 @@ Fases do jogo. Cada arquivo `.unity` é uma cena independente.
 
 | Arquivo | Descrição |
 |---|---|
-| `Basico Teste.unity` | Cena principal jogável do projeto |
+| `Ecto-Scape.unity` | Cena principal jogável do projeto |
 | `SampleScene.unity` | Cena base/minimalista preservada apenas como template URP |
 
 ---
 
-## 🎯 Hierarchy da cena principal jogável (`Basico Teste.unity`)
+## 🎯 Hierarchy da cena principal jogável (`Ecto-Scape.unity`)
 
 ```
 Scene
@@ -109,4 +109,4 @@ Scene
 
 > ⚠️ O nome da cena em `GameManager` e `LevelEnd` deve bater **exatamente** com o de Build Settings — incluindo maiúsculas/minúsculas.
 
-> ℹ️ No estado atual do projeto, apenas `Basico Teste.unity` fica no Build Settings. `SampleScene.unity` foi mantida apenas como template/base de referência.
+> ℹ️ No estado atual do projeto, apenas `Ecto-Scape.unity` fica no Build Settings. `SampleScene.unity` foi mantida apenas como template/base de referência.

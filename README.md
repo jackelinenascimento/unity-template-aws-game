@@ -108,7 +108,7 @@ git clone https://github.com/Connect-Byte-Hangout/unity-template-aws-game.git
 3. Abra o projeto com o **Unity Editor 6.0 / 6000.0.50f1**.
 4. Espere a primeira importação terminar completamente.
 5. No painel **Project**, abra a cena principal:
-   `Assets/Scenes/Basico Teste.unity`
+   `Assets/Scenes/Ecto-Scape.unity`
 6. Clique em **Play**.
 
 ### Rodar no Unix sem ESP32
@@ -166,7 +166,7 @@ O projeto já está preparado para abrir localmente mesmo sem hardware:
 
 ## 🧭 Cena Principal
 
-- Cena jogável principal: `Assets/Scenes/Basico Teste.unity`
+- Cena jogável principal: `Assets/Scenes/Ecto-Scape.unity`
 - `SampleScene.unity` fica apenas como template/base de referência
 
 ---
