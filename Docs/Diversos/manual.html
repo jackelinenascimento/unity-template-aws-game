@@ -1,0 +1,1692 @@
+
+<!-- Guia Connect Byte x AWS -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guia Connect Byte x AWS · Unity + IA + ESP32</title>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Nunito:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+  :root{
+    --paper:#FBF8FF;
+    --card:#FFFFFF;
+    --lilac-50:#F4EDFB;
+    --lilac-100:#EBE0F8;
+    --lilac-200:#DCC9F1;
+    --lilac-300:#C4A3E6;
+    --lilac-400:#A87BD6;
+    --lilac-500:#8B5CC4;
+    --plum:#5B3B8C;
+    --plum-deep:#3E2A5E;
+    --ink:#3A2F4A;
+    --ink-soft:#6B6076;
+    --rose:#E9A6C4;
+    --rose-bg:#FDEFF6;
+    --mint:#BDE8D4;
+    --mint-bg:#EDFAF3;
+    --line:#EADEF7;
+    --code-bg:#2B2140;
+    --code-ink:#E9DEFB;
+    --radius:20px;
+    --radius-sm:12px;
+    --shadow:0 18px 44px -28px rgba(91,59,140,.55);
+    --shadow-soft:0 8px 24px -18px rgba(91,59,140,.5);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} *{animation:none!important;transition:none!important}}
+
+  body{
+    margin:0;
+    background:
+      radial-gradient(1100px 600px at 12% -8%, #F1E6FB 0%, transparent 55%),
+      radial-gradient(900px 520px at 98% 4%, #F8ECF5 0%, transparent 50%),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Nunito',system-ui,sans-serif;
+    font-size:16px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+
+  /* ---------- HERO ---------- */
+  header.hero{padding:64px 0 34px;text-align:center}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:9px;
+    background:var(--card);border:1px solid var(--line);
+    color:var(--plum);font-weight:800;letter-spacing:.12em;
+    text-transform:uppercase;font-size:.68rem;
+    padding:8px 16px;border-radius:999px;box-shadow:var(--shadow-soft);
+  }
+  .eyebrow .dot{width:8px;height:8px;border-radius:50%;background:var(--lilac-400)}
+  .hero h1{
+    font-family:'Fraunces',serif;font-weight:600;
+    font-size:clamp(2.3rem,6vw,3.9rem);line-height:1.02;
+    margin:22px auto 12px;max-width:14ch;color:var(--plum-deep);
+    letter-spacing:-.01em;
+  }
+  .hero h1 em{font-style:italic;color:var(--lilac-500)}
+  .hero .sub{font-size:clamp(1rem,2.4vw,1.2rem);color:var(--ink-soft);max-width:42ch;margin:0 auto;font-weight:600}
+  .hero .tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+  .hero .tags span{background:var(--lilac-50);border:1px solid var(--lilac-200);color:var(--plum);padding:6px 14px;border-radius:999px;font-weight:700;font-size:.86rem}
+
+  /* ---------- FLOW HERO DIAGRAM ---------- */
+  .flow{
+    margin:34px auto 0;background:var(--card);border:1px solid var(--line);
+    border-radius:var(--radius);box-shadow:var(--shadow);padding:26px 24px;max-width:960px;
+  }
+  .flow h3{margin:0 0 4px;font-family:'Fraunces',serif;font-weight:600;color:var(--plum-deep);font-size:1.15rem}
+  .flow p.k{margin:0 0 20px;color:var(--ink-soft);font-weight:600;font-size:.92rem}
+  .flow-track{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;justify-content:center}
+  .step{
+    flex:1 1 130px;min-width:120px;text-align:center;padding:14px 10px;
+    border-radius:var(--radius-sm);background:var(--lilac-50);border:1px solid var(--lilac-100);
+    position:relative;
+  }
+  .step .ic{font-size:1.5rem;line-height:1}
+  .step b{display:block;color:var(--plum-deep);margin-top:6px;font-size:.92rem;font-weight:800}
+  .step small{color:var(--ink-soft);font-weight:600}
+  .arrow{align-self:center;color:var(--lilac-400);font-weight:900;padding:0 6px;font-size:1.2rem}
+  @media(max-width:640px){.arrow{transform:rotate(90deg)}}
+
+  /* ---------- LAYOUT ---------- */
+  .shell{display:grid;grid-template-columns:250px 1fr;gap:34px;align-items:start;padding:40px 0 90px}
+  @media(max-width:920px){.shell{grid-template-columns:1fr;gap:0}}
+
+  nav.toc{
+    position:sticky;top:20px;align-self:start;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:20px 16px;box-shadow:var(--shadow-soft);max-height:calc(100vh - 40px);overflow:auto;
+  }
+  nav.toc h4{margin:0 0 12px;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--lilac-500);font-weight:800}
+  nav.toc .grp{font-family:'Fraunces',serif;color:var(--plum-deep);font-weight:600;font-size:.9rem;margin:16px 0 6px}
+  nav.toc a{display:block;color:var(--ink-soft);text-decoration:none;font-size:.86rem;font-weight:600;padding:5px 10px;border-radius:9px;line-height:1.3}
+  nav.toc a:hover{background:var(--lilac-50);color:var(--plum)}
+  nav.toc a b{color:var(--lilac-400);font-weight:800;margin-right:6px}
+  @media(max-width:920px){
+    nav.toc{position:static;max-height:none;margin-bottom:8px}
+    nav.toc details{cursor:pointer}
+    nav.toc summary{font-family:'Fraunces',serif;color:var(--plum-deep);font-weight:700;font-size:1.05rem;list-style:none}
+    nav.toc summary::-webkit-details-marker{display:none}
+    nav.toc summary::after{content:'▾';float:right;color:var(--lilac-400)}
+  }
+
+  main{min-width:0}
+
+  section.card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow-soft);padding:30px 32px;margin-bottom:22px;scroll-margin-top:16px;
+  }
+  @media(max-width:520px){section.card{padding:24px 20px}}
+
+  .grouphead{margin:38px 0 14px;display:flex;align-items:center;gap:14px}
+  .grouphead:first-child{margin-top:0}
+  .grouphead .num{
+    flex:none;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--lilac-400),var(--plum));color:#fff;font-weight:800;font-family:'Fraunces',serif;
+  }
+  .grouphead h2{margin:0;font-family:'Fraunces',serif;font-weight:600;color:var(--plum-deep);font-size:1.55rem}
+
+  .sec-tag{display:inline-flex;align-items:center;gap:8px;font-family:'Fraunces',serif;font-weight:700;color:var(--lilac-500);font-size:.82rem}
+  .sec-tag .n{background:var(--lilac-100);color:var(--plum);width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:.8rem}
+  .role-badge{display:inline-flex;gap:2px;margin-left:9px;font-size:.92rem;vertical-align:middle;cursor:help}
+  section.card h3{margin:6px 0 10px;font-family:'Fraunces',serif;font-weight:600;color:var(--plum-deep);font-size:1.32rem;line-height:1.2}
+  section.card h4{margin:20px 0 8px;color:var(--plum);font-weight:800;font-size:1.02rem}
+  section.card p{margin:10px 0}
+  section.card ul,section.card ol{margin:10px 0;padding-left:22px}
+  section.card li{margin:6px 0}
+  section.card ul{list-style:none;padding-left:0}
+  section.card ul li{position:relative;padding-left:24px}
+  section.card ul li::before{content:'';position:absolute;left:4px;top:.62em;width:8px;height:8px;border-radius:50%;background:var(--lilac-300)}
+  section.card ol{padding-left:20px}
+  section.card ol li{padding-left:4px}
+  strong{color:var(--plum-deep);font-weight:800}
+  code:not(pre code){background:var(--lilac-50);color:var(--plum);border:1px solid var(--lilac-100);padding:1px 7px;border-radius:7px;font-family:'JetBrains Mono',monospace;font-size:.85em;font-weight:500}
+
+  /* ---------- callouts ---------- */
+  .note{border-radius:var(--radius-sm);padding:14px 16px 14px 18px;margin:16px 0;font-weight:600;position:relative;border:1px solid}
+  .note .lab{display:block;font-family:'Fraunces',serif;font-weight:700;font-size:.85rem;letter-spacing:.02em;margin-bottom:3px}
+  .note.plain{background:var(--lilac-50);border-color:var(--lilac-200)}
+  .note.plain .lab{color:var(--lilac-500)}
+  .note.warn{background:var(--rose-bg);border-color:var(--rose)}
+  .note.warn .lab{color:#C25891}
+  .note.tip{background:var(--mint-bg);border-color:var(--mint)}
+  .note.tip .lab{color:#2F9C6E}
+  .note p{margin:4px 0 0}
+  .note code:not(pre code){background:#fff}
+
+  /* ---------- code ---------- */
+  .codebox{position:relative;margin:16px 0}
+  .codebox .head{
+    display:flex;align-items:center;justify-content:space-between;
+    background:#241B36;border:1px solid #372a52;border-bottom:0;
+    border-radius:12px 12px 0 0;padding:8px 14px;
+  }
+  .codebox .head span{color:#B79FE0;font-family:'JetBrains Mono',monospace;font-size:.75rem;font-weight:600;letter-spacing:.03em}
+  .codebox .copy{
+    background:var(--lilac-400);color:#fff;border:0;border-radius:7px;padding:5px 12px;
+    font-family:'Nunito',sans-serif;font-weight:800;font-size:.75rem;cursor:pointer;transition:background .15s;
+  }
+  .codebox .copy:hover{background:var(--plum)}
+  .codebox .copy:focus-visible{outline:2px solid var(--plum-deep);outline-offset:2px}
+  pre{
+    margin:0;background:var(--code-bg);color:var(--code-ink);
+    border:1px solid #372a52;border-radius:0 0 12px 12px;
+    padding:16px 18px;overflow:auto;font-family:'JetBrains Mono',monospace;font-size:.83rem;line-height:1.6;
+  }
+  pre.solo{border-radius:12px}
+  .cm{color:#9C86C4}.kw{color:#E3A6D8}.st{color:#B7E2A8}.fn{color:#8FD0F0}
+
+  /* ---------- table ---------- */
+  .tbl{overflow:auto;margin:16px 0;border:1px solid var(--line);border-radius:var(--radius-sm)}
+  table{border-collapse:collapse;width:100%;font-size:.92rem}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--lilac-50);color:var(--plum);font-weight:800;font-family:'Fraunces',serif}
+  tr:last-child td{border-bottom:0}
+  td code:not(pre code){white-space:nowrap}
+
+  /* ---------- checklist ---------- */
+  .check{list-style:none;padding:0;margin:14px 0}
+  .check li{padding-left:0}
+  .check li::before{display:none}
+  .check label{display:flex;align-items:flex-start;gap:11px;padding:9px 12px;border-radius:10px;cursor:pointer;font-weight:700;transition:background .15s}
+  .check label:hover{background:var(--lilac-50)}
+  .check input{appearance:none;flex:none;width:22px;height:22px;border-radius:7px;border:2px solid var(--lilac-300);margin-top:1px;cursor:pointer;position:relative;transition:all .15s}
+  .check input:checked{background:var(--lilac-400);border-color:var(--lilac-400)}
+  .check input:checked::after{content:'✓';position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-weight:900;font-size:.8rem}
+  .check input:focus-visible{outline:2px solid var(--plum);outline-offset:2px}
+  .check input:checked + span{color:var(--ink-soft);text-decoration:line-through;text-decoration-color:var(--lilac-300)}
+  .chk-sub{font-family:'Fraunces',serif;color:var(--plum);font-weight:700;margin:16px 0 2px}
+
+  .ascii{background:var(--lilac-50);border:1px dashed var(--lilac-200);border-radius:var(--radius-sm);padding:14px 16px;margin:14px 0;font-family:'JetBrains Mono',monospace;font-size:.82rem;color:var(--plum-deep);white-space:pre;overflow:auto;line-height:1.5}
+
+  footer{text-align:center;padding:30px 20px 60px;color:var(--ink-soft);font-weight:600;font-size:.9rem}
+  footer .heart{color:var(--rose)}
+
+  a.backtop{color:var(--lilac-500);font-weight:800;text-decoration:none;font-size:.82rem}
+  a.backtop:hover{color:var(--plum)}
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow"><span class="dot"></span> Connect Byte × AWS</span>
+    <h1>Seu guia pra criar um <em>jogo que fala</em> com o mundo real</h1>
+    <p class="sub">Um jogo 2D no Unity que conversa com um ESP32 — e o display OLED mostra as reações. Passo a passo, sem susto.</p>
+    <div class="tags"><span>Unity</span><span>IA</span><span>ESP32</span><span>OLED</span><span>C#</span></div>
+
+    <div class="flow">
+      <h3>A ideia do projeto em uma imagem</h3>
+      <p class="k">Você faz algo no jogo → o Unity percebe → manda um recado pro ESP32 → a carinha no OLED muda.</p>
+      <div class="flow-track">
+        <div class="step"><div class="ic">🎮</div><b>No jogo</b><small>você pega um item</small></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="ic">🧠</div><b>Unity</b><small>conta o item</small></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="ic">📨</div><b>Serial</b><small>envia <code>T</code></small></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="ic">🔌</div><b>ESP32</b><small>recebe o recado</small></div>
+        <div class="arrow">→</div>
+        <div class="step"><div class="ic">😊</div><b>OLED</b><small>fica feliz</small></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="shell">
+
+        <!-- ================= TOC ================= -->
+    <nav class="toc" aria-label="Índice">
+      <a href="#s36" style="display:block;text-align:center;background:var(--lilac-400);color:#fff;font-weight:800;padding:9px 12px;border-radius:11px;text-decoration:none;margin-bottom:12px;font-size:.86rem">📖 Glossário rápido</a>
+      <details open>
+        <summary><h4 style="display:inline">Índice</h4></summary>
+        <div class="grp">Quem faz o quê</div>
+        <a href="#s-equipe"><b>👥</b>Divisão da equipe</a>
+        <a href="#s-fluxo"><b>🔄</b>Fluxo de cada área</a>
+        <div class="grp">Introdução</div>
+        <a href="#s-intro-kiro"><b>✦</b>Kiro, AWS &amp; a dinâmica</a>
+        <a href="#s-jogo"><b>🎮</b>Que jogo é esse</a>
+        <a href="#s-porque"><b>✦</b>Por que esses componentes</a>
+        <div class="grp">Antes de tudo</div>
+        <a href="#s1"><b>01</b>O que instalar</a>
+        <a href="#s2"><b>02</b>Clonar o repositório</a>
+        <a href="#s3"><b>03</b>Entender as pastas</a>
+        <a href="#s4"><b>04</b>Abrir no Unity Hub</a>
+        <a href="#s5"><b>05</b>Se pedir outra versão</a>
+        <div class="grp">Conhecendo o Unity</div>
+        <a href="#s6"><b>06</b>As janelas do Unity</a>
+        <a href="#s7"><b>07</b>Testar: abrir a cena</a>
+        <a href="#s8"><b>08</b>Rodar a cena</a>
+        <div class="grp">Fase 1 — Personagem</div>
+        <a href="#s14"><b>09</b>Separar sprites</a>
+        <a href="#s15"><b>10</b>Colocar personagem na cena</a>
+        <div class="grp">Fase 2 — Cenário</div>
+        <a href="#s-cenario-visao"><b>✦</b>Mais que só o chão</a>
+        <a href="#s9"><b>11</b>Onde está o chão</a>
+        <a href="#s10"><b>12</b>Colocar chão</a>
+        <a href="#s11"><b>13</b>Fazer o chão crescer</a>
+        <a href="#s12"><b>14</b>Deixar o chão fixo</a>
+        <div class="grp">Fase 3 — Hardware</div>
+        <a href="#s-hw-resumo"><b>🔌</b>Visão geral</a>
+        <div class="grp">Fase 4 — Mecânica</div>
+        <a href="#s13"><b>15</b>Personagem em cima do chão</a>
+        <a href="#s16"><b>16</b>Fazer o personagem andar</a>
+        <a href="#s17"><b>17</b>Reconhecer o chão</a>
+        <a href="#s18"><b>18</b>Funcionar no Play</a>
+        <a href="#s19"><b>19</b>Itens coletáveis</a>
+        <a href="#s20"><b>20</b>Obstáculos</a>
+        <a href="#s21"><b>21</b>Sistema de pontuação</a>
+        <a href="#s22"><b>22</b>Montar a HUD</a>
+        <a href="#s29"><b>23</b>Ponto de vitória</a>
+        <a href="#s28"><b>24</b>A fase mínima</a>
+        <div class="grp">ESP32 e OLED na prática</div>
+        <a href="#s-oled"><b>✦</b>As carinhas &amp; o OLED</a>
+        <a href="#s-controle"><b>✦</b>Controle físico &amp; letras</a>
+        <a href="#s23"><b>25</b>Serial no Unity</a>
+        <a href="#s24"><b>26</b>Código do ESP32/OLED</a>
+        <a href="#s-desenho"><b>✦</b>Desenhar as carinhas</a>
+        <a href="#s25"><b>27</b>Testar ESP32 sozinho</a>
+        <a href="#s26"><b>28</b>Unity + ESP32</a>
+        <a href="#s27"><b>29</b>Testar os eventos</a>
+        <div class="grp">Personalizar e usar IA</div>
+        <a href="#s30"><b>30</b>Personalizar o jogo</a>
+        <a href="#s31"><b>31</b>Prompts pros assets</a>
+        <a href="#s-kiro"><b>✦</b>O que é o Kiro</a>
+        <a href="#s32"><b>32</b>Usar o Kiro com calma</a>
+        <div class="grp">Checklists e resumo</div>
+        <a href="#s33"><b>33</b>Checklist de entrega</a>
+        <a href="#s34"><b>34</b>Problemas comuns</a>
+        <a href="#s35"><b>35</b>Roteiro do dia</a>
+        <a href="#s36"><b>36</b>Glossário &amp; resumo</a>
+      </details>
+    </nav>
+
+    <!-- ================= CONTENT ================= -->
+    <main>
+      <div class="grouphead"><div class="num">1</div><h2>Quem faz o quê</h2></div>
+
+      <section class="card" id="s-equipe">
+        <span class="sec-tag"><span class="n">👥</span> Equipe</span>
+        <h3>Quem faz o quê</h3>
+        <p>Antes de abrir o Kiro ou o ChatGPT, decidam juntas quem cuida de cada parte do projeto. Isso evita todo mundo tentando fazer a mesma coisa ao mesmo tempo — e deixa claro pra quem perguntar quando travar em algo. Enquanto uma pessoa gera assets, as outras conseguem trabalhar normalmente, em paralelo.</p>
+        <div class="tbl"><table>
+          <tr><th>Papel</th><th>Cuida de</th><th>Ferramenta</th></tr>
+          <tr><td><strong>🎨 Artista</strong></td><td>Personagem, expressões, ícones, interface</td><td>ChatGPT ou Kiro</td></tr>
+          <tr><td><strong>🏞️ Cenário</strong></td><td>Tiles, plataformas, obstáculos, itens</td><td>ChatGPT ou Kiro</td></tr>
+          <tr><td><strong>🕹️ Unity</strong></td><td>Importar sprites, montar a fase, colliders, organização da cena</td><td>Unity</td></tr>
+          <tr><td><strong>⚙️ Gameplay</strong></td><td>Mecânicas, regras, scripts, pontuação</td><td>Kiro e Unity</td></tr>
+          <tr><td><strong>🔌 Hardware</strong></td><td>ESP32, OLED, botões, comunicação Serial</td><td>Arduino IDE ou VS Code</td></tr>
+        </table></div>
+        <div class="note tip"><span class="lab">Se a equipe tiver 10 pessoas</span>
+          <p>Dividam em duplas, uma por papel — ou ajustem como fizer mais sentido pro grupo. O importante é que os 5 papéis fiquem cobertos por alguém.</p>
+        </div>
+        <div class="note plain"><span class="lab">Esses ícones vão aparecer nas seções</span>
+          <p>A partir da Fase 1, cada seção prática traz um ou mais desses ícones no topo, indicando de quem é a tarefa: 🎨 Artista · 🏞️ Cenário · 🕹️ Unity · ⚙️ Gameplay · 🔌 Hardware. Se aparecer mais de um, é porque envolve mais de um papel trabalhando junto.</p>
+        </div>
+      </section>
+
+      <section class="card" id="s-fluxo">
+        <span class="sec-tag"><span class="n">🔄</span> Equipe</span>
+        <h3>O fluxo de cada área (pra rotação de funções)</h3>
+        <p>Como vai haver <strong>rotação de papéis</strong>, cada menina precisa conseguir explicar pra próxima o que já foi feito e o que falta — vocês têm até <strong>2 minutos</strong> na troca. Use o quadro da sua área como roteiro: o que você <strong>recebe</strong> pra começar, o que você <strong>faz</strong>, e o que você <strong>entrega</strong> pra quem vem depois.</p>
+
+        <div class="tbl"><table>
+          <tr><th>Área</th><th>Recebe (antes)</th><th>Faz</th><th>Entrega (depois)</th></tr>
+          <tr>
+            <td><strong>🎨 Artista</strong></td>
+            <td>A ideia do tema do jogo e o prompt de personagem</td>
+            <td>Gera personagem e as expressões (idle, happy, sad…), fatia em sprites</td>
+            <td>Sprites prontos na pasta <code>Assets/Art</code>, pra Unity montar</td>
+          </tr>
+          <tr>
+            <td><strong>🏞️ Cenário</strong></td>
+            <td>O tema e os prompts de tiles/cenário</td>
+            <td>Gera chão, plataformas, decoração, itens e obstáculos</td>
+            <td>Sprites de cenário na pasta <code>Assets/Art</code>, pra Unity montar a fase</td>
+          </tr>
+          <tr>
+            <td><strong>🕹️ Unity</strong></td>
+            <td>Os sprites da Artista e do Cenário</td>
+            <td>Importa sprites, monta a fase, coloca colliders, organiza a Hierarchy</td>
+            <td>Uma fase montada, com Player e chão funcionando, pra Gameplay programar</td>
+          </tr>
+          <tr>
+            <td><strong>⚙️ Gameplay</strong></td>
+            <td>A fase montada pela Unity</td>
+            <td>Cria itens, obstáculos, pontuação, HUD e as reações que vão pro OLED</td>
+            <td>Jogo com regras funcionando e enviando comandos pela Serial</td>
+          </tr>
+          <tr>
+            <td><strong>🔌 Hardware</strong></td>
+            <td>A lista de comandos que o Gameplay envia (H, D, T…)</td>
+            <td>Liga o OLED no ESP32, programa as carinhas, testa a comunicação</td>
+            <td>OLED reagindo de verdade às ações do jogo</td>
+          </tr>
+        </table></div>
+
+        <div class="note tip"><span class="lab">Roteiro dos 2 minutos na troca</span>
+          <p>Ao passar o bastão, diga rapidinho: <strong>(1)</strong> em que ponto do "Faz" você parou, <strong>(2)</strong> o que já está testado e funcionando, e <strong>(3)</strong> o que ficou pendente ou deu problema. Assim quem assume não precisa adivinhar nada.</p>
+        </div>
+        <div class="note plain"><span class="lab">Todas passam por todas as áreas</span>
+          <p>A rotação existe pra todo mundo aprender um pouco de cada parte. Não precisa dominar tudo — é só continuar de onde a colega parou, usando a seção certa deste guia como apoio.</p>
+        </div>
+      </section>
+
+      <div class="grouphead"><div class="num">2</div><h2>Introdução</h2></div>
+
+      <section class="card" id="s-intro-kiro">
+        <span class="sec-tag"><span class="n">✦</span> Introdução</span>
+        <h3>O que é o Kiro e como funciona o evento</h3>
+        <p>Este é um evento da <strong>AWS</strong>, e o <strong>Kiro</strong> é a ferramenta principal — um editor de código com <strong>inteligência artificial</strong> que a AWS criou. Em vez de escrever tudo em C# na mão, vocês vão <strong>conversar com ele em inglês</strong> descrevendo o que querem, e ele lê o projeto e escreve ou edita os arquivos, explicando o que mudou.</p>
+        <div class="note plain"><span class="lab">Como funciona o dia</span>
+          <p>Vocês vão trabalhar em equipe, cada pessoa com um papel (seção anterior), construindo um jogo 2D no Unity que conversa com um hardware físico (ESP32 + OLED). O objetivo mínimo e as personalizações estão nos checklists deste guia — sigam a ordem, testando cada etapa antes de seguir pra próxima.</p>
+        </div>
+        <div class="note tip"><span class="lab">Times e pessoa de suporte</span>
+          <p>O evento é dividido em <strong>times</strong>, e cada time tem uma <strong>pessoa de suporte</strong> dedicada durante o dia. Sempre que travarem em algo — um erro que não passa, uma dúvida sobre o passo a passo, o repositório que não abre — chamem o suporte do seu time. Ninguém precisa resolver tudo sozinha.</p>
+        </div>
+        <div class="note tip"><span class="lab">Todo mundo está aprendendo junto</span>
+          <p>Não tem problema não saber algo de antemão — ninguém precisa chegar sabendo Unity, C# ou ESP32. O guia foi feito pra isso: seguir o passo a passo, testar, e pedir ajuda quando travar.</p>
+        </div>
+        <div class="note plain"><span class="lab">Onde encontrar este guia</span>
+          <p>O link e o QR code deste material são compartilhados pela organização no início do evento. O documento oficial também está linkado no rodapé desta página.</p>
+        </div>
+      </section>
+
+      <section class="card" id="s-jogo">
+        <span class="sec-tag"><span class="n">🎮</span> Introdução</span>
+        <h3>Que jogo é esse, afinal</h3>
+        <p>Vocês vão construir um <strong>jogo 2D de plataforma</strong> — daqueles em que a jogadora controla um personagem que anda de um lado pro outro e pula. A grande sacada é que esse jogo <strong>conversa com um hardware físico</strong>: enquanto a jogadora joga na tela, uma telinha (o OLED) ali do lado mostra as <strong>reações do personagem</strong> em tempo real.</p>
+
+        <div class="note plain"><span class="lab">O objetivo do jogo</span>
+          <p>A jogadora atravessa a fase <strong>coletando todos os itens</strong> e desviando de obstáculos. Quando o <strong>último item</strong> é coletado (ou ela chega no ponto final), aparece o painel de <strong>fim de jogo</strong>. É um jogo de "pegue tudo pra vencer".</p>
+        </div>
+
+        <h4>As regras principais</h4>
+        <div class="tbl"><table>
+          <tr><th>O que acontece</th><th>Efeito no jogo</th><th>Reação no OLED</th></tr>
+          <tr><td>Pega um item coletável</td><td>O item some e é contado</td><td>Carinha feliz (<code>T</code>)</td></tr>
+          <tr><td>Encosta num obstáculo</td><td>Dispara a reação de dano</td><td>Carinha assustada (<code>D</code>)</td></tr>
+          <tr><td>Pega o último item / chega no final</td><td>Painel de fim, jogo pausa</td><td>Carinha feliz (<code>T</code>)</td></tr>
+          <tr><td>Jogo rodando normal</td><td>—</td><td>Carinha neutra (<code>I</code>)</td></tr>
+        </table></div>
+
+        <div class="note tip"><span class="lab">A lógica que liga tudo</span>
+          <p>Guarde este fluxo, porque é o coração do projeto: <strong>a jogadora faz algo no jogo → o Unity percebe → manda uma letra pela USB → o ESP32 recebe → a carinha muda no OLED.</strong> Todas as fases técnicas mais adiante existem pra construir alguma parte desse caminho.</p>
+        </div>
+        <div class="note plain"><span class="lab">O mínimo que o jogo precisa ter</span>
+          <p>1 fase jogável, 1 personagem controlável (pelo controle do ESP32), 3 itens coletáveis, 3 obstáculos, e a comunicação com o OLED reagindo (carinhas neutra, feliz e de dano). A lista completa pra conferir na entrega está na seção 33.</p>
+        </div>
+      </section>
+
+      <section class="card" id="s-porque">
+        <span class="sec-tag"><span class="n">✦</span> Introdução</span>
+        <h3>Por que esses componentes</h3>
+        <p>Antes de colocar a mão na massa, vale entender rapidinho o papel de cada peça do projeto:</p>
+        <div class="tbl"><table>
+          <tr><th>Componente</th><th>Por que ele existe aqui</th></tr>
+          <tr><td><strong>Unity</strong></td><td>É o motor de jogo: onde vocês montam a fase, o personagem, e testam tudo rodando.</td></tr>
+          <tr><td><strong>ESP32</strong></td><td>Uma placa física pequena que conecta o jogo ao mundo real, recebendo e enviando comandos pela porta USB.</td></tr>
+          <tr><td><strong>OLED</strong></td><td>A telinha ligada ao ESP32, onde aparecem as carinhas reagindo ao que acontece no jogo.</td></tr>
+          <tr><td><strong>Kiro</strong></td><td>A IA que ajuda a escrever o código do jogo e do firmware, pra vocês focarem em decidir o quê construir.</td></tr>
+        </table></div>
+        <div class="note plain"><span class="lab">Quer mais detalhes?</span>
+          <p>Tem uma explicação completa de cada um mais adiante: <a href="#s-kiro" style="color:var(--lilac-500);font-weight:800">O que é o Kiro</a> e <a href="#s-oled" style="color:var(--lilac-500);font-weight:800">As carinhas &amp; o OLED</a>.</p>
+        </div>
+      </section>
+
+      <div class="grouphead"><div class="num">3</div><h2>Antes de tudo</h2></div>
+
+<section class="card" id="s1">
+        <span class="sec-tag"><span class="n">01</span> Preparação</span>
+        <h3>O que precisa estar instalado</h3>
+        <p>Antes do evento, é bom já deixar tudo instalado na máquina pra não perder tempo no dia.</p>
+        <ul class="check" data-key="s1">
+          <li><label><input type="checkbox"><span>Git</span></label></li>
+          <li><label><input type="checkbox"><span>GitHub Desktop <em>(opcional)</em></span></label></li>
+          <li><label><input type="checkbox"><span>Unity Hub</span></label></li>
+          <li><label><input type="checkbox"><span>Unity Editor na versão do projeto</span></label></li>
+          <li><label><input type="checkbox"><span>Arduino IDE <em>ou</em> VS Code</span></label></li>
+          <li><label><input type="checkbox"><span>Driver do ESP32 <em>(se necessário)</em></span></label></li>
+          <li><label><input type="checkbox"><span><strong>Kiro</strong> <em>— principal ferramenta de código do evento</em></span></label></li>
+        </ul>
+        <div class="note plain"><span class="lab">Em palavras simples</span>
+          <p>O <strong>Git</strong> serve pra baixar o projeto do GitHub. Baixar uma cópia do projeto pra sua máquina tem um nome: <strong>clonar o repositório</strong>. Pelo GitHub Desktop, o caminho é entrar no repo, clicar em <code>Code</code> e clonar.</p>
+        </div>
+      </section>
+
+<section class="card" id="s2">
+        <span class="sec-tag"><span class="n">02</span> Preparação</span>
+        <h3>Clonar o repositório do GitHub</h3>
+        <p>O repositório do projeto é:</p>
+        <pre class="solo">https://github.com/Connect-Byte-Hangout/unity-template-aws-game</pre>
+        <p>Sugestão de pasta pra salvar: <code>C:\Projetos\ConnectByte\</code></p>
+        <div class="note warn"><span class="lab">Atenção</span>
+          <p>Evite salvar dentro do OneDrive ou em pastas com nomes muito longos — o Unity fica chato com caminho sincronizado.</p>
+        </div>
+        <p>Depois de clonar, deve aparecer uma pasta chamada <code>unity-template-aws-game</code> — e essa pasta <strong>já é o projeto Unity</strong>, contendo:</p>
+        <div class="ascii">Assets/
+Packages/
+ProjectSettings/
+.gitignore</div>
+        <p>Duas formas de clonar. Escolha a que for mais confortável pra você.</p>
+
+        <h4>Opção 1 — Pelo Git Bash <em>(por comando)</em></h4>
+        <p><strong>Passo 1.</strong> No Windows, crie a pasta <code>C:\Projetos</code>.<br>
+        <strong>Passo 2.</strong> Clique com o botão direito dentro dela e escolha <code>Open Git Bash here</code>.<br>
+        <strong>Passo 3.</strong> Rode os comandos abaixo (um por linha, apertando Enter em cada um):</p>
+        <div class="codebox"><div class="head"><span>git bash</span><button class="copy">Copiar</button></div><pre>git clone https://github.com/Connect-Byte-Hangout/unity-template-aws-game.git
+cd unity-template-aws-game
+ls</pre></div>
+        <p>O <code>git clone</code> baixa o projeto, o <code>cd</code> entra na pasta baixada, e o <code>ls</code> lista o que tem dentro. Se deu tudo certo, o <code>ls</code> deve mostrar <code>Assets</code>, <code>Packages</code> e <code>ProjectSettings</code> — os três sinais de que essa pasta é o projeto Unity.</p>
+        <div class="note plain"><span class="lab">Se der erro</span>
+          <p>Se aparecer <code>Repository not found</code> ou <code>404 Not Found</code>, geralmente é uma destas duas coisas: o link está digitado errado, ou o repositório ainda está <strong>privado</strong> (só quem foi convidado consegue acessar). Antes de ficar tentando sozinha, peça para a <strong>pessoa de suporte do seu time</strong> confirmar: (1) se o repositório já está marcado como <strong>público</strong> no GitHub, e (2) se o link é exatamente este. Assim você não perde tempo debugando um problema que não é da sua máquina.</p>
+        </div>
+
+        <h4>Opção 2 — Pelo Kiro</h4>
+        <p>Abra o Kiro dentro da pasta onde você quer salvar o projeto (ex: <code>C:\Projetos</code>) e peça:</p>
+        <div class="codebox"><div class="head"><span>kiro · clonar repositório</span><button class="copy">Copiar</button></div><pre>Clone the repository at https://github.com/Connect-Byte-Hangout/unity-template-aws-game.git
+into the current folder.
+After cloning, list the contents of the resulting folder so I can confirm it worked.</pre></div>
+        <p>O Kiro roda o <code>git clone</code> por você e mostra o resultado.</p>
+        <div class="note plain"><span class="lab">Se der erro</span>
+          <p>Mesmo problema da opção do Git Bash: o erro <code>404</code>/<code>Repository not found</code> costuma ser link errado ou repositório ainda privado. Peça para a <strong>pessoa de suporte do seu time</strong> confirmar se ele já está público antes de insistir tentando de novo.</p>
+        </div>
+      </section>
+
+<section class="card" id="s3">
+        <span class="sec-tag"><span class="n">03</span> Preparação</span>
+        <h3>Entender a estrutura do projeto</h3>
+        <p>Veja como os arquivos deste projeto estão organizados, antes de abrir qualquer coisa no Unity.</p>
+        <div class="note plain"><span class="lab">No repositório deste projeto</span>
+          <p>Diferente de alguns templates que separam tudo em subpastas, aqui a <strong>raiz do repositório já é o projeto Unity</strong>. É a própria pasta clonada que você abre no Unity Hub.</p>
+        </div>
+        <div class="ascii">unity-template-aws-game/      ← já é o projeto Unity
+├── Assets/
+│   ├── Art/            → sprites, animações, cenários, chão
+│   ├── Scenes/          → as fases (.unity)
+│   ├── Scripts/         → código C# (ex: PlayerController.cs)
+│   └── Settings/        → configurações de render (URP)
+├── Packages/            → dependências do Unity
+└── ProjectSettings/     → configurações do projeto</div>
+        <div class="tbl"><table>
+          <tr><th>Pasta</th><th>O que tem dentro</th></tr>
+          <tr><td><code>Assets/Art</code></td><td>Sprites, animações, prefabs de cenário e chão</td></tr>
+          <tr><td><code>Assets/Scenes</code></td><td>As fases do jogo (arquivos <code>.unity</code>)</td></tr>
+          <tr><td><code>Assets/Scripts</code></td><td>Código C# do gameplay</td></tr>
+          <tr><td><code>Packages</code> / <code>ProjectSettings</code></td><td>Configuração interna do Unity — normalmente você não edita isso na mão</td></tr>
+        </table></div>
+        <div class="note tip"><span class="lab">Regra de ouro</span>
+          <p>Se uma pasta tem <code>Assets</code>, <code>Packages</code> e <code>ProjectSettings</code>, <strong>ela é o projeto Unity</strong>. Aqui, essa pasta é a própria raiz.</p>
+        </div>
+        <div class="note plain"><span class="lab">O código do ESP32 vocês vão criar</span>
+          <p>A parte de <strong>jogo</strong> fica no Unity (essas pastas). Já o <strong>código do ESP32/OLED</strong> é criado pela equipe de <strong>Hardware</strong> durante o evento — veja as seções do grupo "ESP32 e OLED na prática".</p>
+        </div>
+      </section>
+
+<section class="card" id="s4">
+        <span class="sec-tag"><span class="n">04</span> Preparação</span>
+        <h3>Abrir o projeto no Unity Hub</h3>
+        <p>O Unity Hub serve pra gerenciar e abrir projetos, além de instalar versões do Editor.</p>
+        <ol>
+          <li>Abra o <strong>Unity Hub</strong>.</li>
+          <li>Clique em <code>Add project from disk</code>.</li>
+          <li>Escolha a <strong>pasta raiz</strong> que você clonou (ex: <code>C:\Projetos\unity-template-aws-game</code>) — não precisa entrar em nenhuma subpasta.</li>
+          <li>Confira se essa pasta tem <code>Assets</code>, <code>Packages</code>, <code>ProjectSettings</code>.</li>
+          <li>Clique pra abrir.</li>
+        </ol>
+        <div class="note plain"><span class="lab">É normal</span>
+          <p>Na primeira vez o Unity pode demorar e mostrar <code>Importing Assets</code>, <code>Compiling Scripts</code>, <code>Resolving Packages</code>. Respira — isso faz parte.</p>
+        </div>
+      </section>
+
+<section class="card" id="s5">
+        <span class="sec-tag"><span class="n">05</span> Preparação</span>
+        <h3>Se o Unity pedir outra versão</h3>
+        <p>Este projeto foi feito no <strong>Unity 6.5 (versão <code>6000.5.1f1</code>)</strong>. O ideal é instalar exatamente essa versão pelo Unity Hub antes de abrir — assim ele não reclama.</p>
+        <div class="note plain"><span class="lab">Como instalar a versão certa</span>
+          <p>No Unity Hub, aba <code>Installs</code> → <code>Install Editor</code> → procure <code>6000.5.1f1</code>. Se não aparecer na lista, clique em <strong>"skip"/"outras versões"</strong> ou baixe pelo <a href="https://unity.com/releases/editor/archive" target="_blank" rel="noopener" style="color:var(--lilac-500);font-weight:800">arquivo de versões da Unity</a>.</p>
+        </div>
+        <p>Se a versão que aparecer na sua máquina for quase igual — por exemplo <code>6000.5.1f2</code> em vez de <code>6000.5.1f1</code>, ou <code>6000.5.2f1</code> — <strong>pode manter e abrir mesmo assim</strong>. A diferença no finalzinho (o <code>f1</code>/<code>f2</code>) é só uma pequena correção de patch e não atrapalha o projeto. O Unity pode mostrar um aviso perguntando se quer abrir com essa versão; é só aceitar.</p>
+        <div class="note warn"><span class="lab">Regra segura</span>
+          <p>Nunca abra com uma versão <strong>mais antiga</strong> que a do projeto. Se foi feito no Unity 6.5, não tente abrir no Unity 2022 — pode corromper ou dar erro que assusta à toa.</p>
+        </div>
+      </section>
+
+      <div class="grouphead"><div class="num">4</div><h2>Conhecendo o Unity</h2></div>
+
+<section class="card" id="s6">
+        <span class="sec-tag"><span class="n">06</span> Unity</span>
+        <h3>As janelas do Unity</h3>
+        <p>As próximas três seções (6 a 8) são só pra <strong>conhecer e testar</strong> se o projeto abre e funciona — vocês ainda não vão criar nada agora. O "mão na massa" começa na Fase 1, um pouco mais adiante.</p>
+        <p>O Unity abre em várias janelas ao mesmo tempo — aqui está pra que serve cada uma que você vai usar sem parar.</p>
+        <div class="tbl"><table>
+          <tr><th>Janela</th><th>Pra que serve</th></tr>
+          <tr><td><strong>Hierarchy</strong></td><td>Lista de tudo que está na cena (ex: <code>Player</code>, <code>Ground</code>, <code>Canvas</code>, <code>GameManager</code>, <code>ESP32SerialReader</code>).</td></tr>
+          <tr><td><strong>Scene</strong></td><td>Onde você monta a fase visualmente (arrasta chão, personagem, obstáculos e itens).</td></tr>
+          <tr><td><strong>Game</strong></td><td>Onde você vê o jogo rodando quando aperta Play.</td></tr>
+          <tr><td><strong>Project</strong></td><td>Onde ficam os arquivos (<code>Assets</code>, <code>Scripts</code>, <code>Sprites</code>, <code>Prefabs</code>, <code>Scenes</code>).</td></tr>
+          <tr><td><strong>Inspector</strong></td><td>Configurações do objeto selecionado (<code>Transform</code>, <code>Sprite Renderer</code>, <code>Rigidbody2D</code>, <code>Collider2D</code>, scripts).</td></tr>
+          <tr><td><strong>Console</strong></td><td>Erros e avisos. <strong>Erro vermelho na Console é algo pra olhar.</strong></td></tr>
+        </table></div>
+        <div class="note plain"><span class="lab">Dois conceitos que aparecem toda hora</span>
+          <p><strong>GameObject</strong> é qualquer "coisa" dentro da cena — o personagem, o chão, uma luz, uma caixa vazia. Tudo que aparece na Hierarchy é um GameObject. <strong>Component</strong> é uma "peça" que você anexa num GameObject pra dar a ele um comportamento — por exemplo, <code>Sprite Renderer</code> (mostra uma imagem), <code>Rigidbody2D</code> (física) e <code>Collider2D</code> (colisão) são components. Um GameObject pode ter vários components ao mesmo tempo — é isso que aparece listado no Inspector quando você clica nele.</p>
+        </div>
+      </section>
+
+      <section class="card" id="s7">
+        <span class="sec-tag"><span class="n">07</span> Unity</span>
+        <h3>Vamos fazer um teste: abrir a cena</h3>
+        <p>Antes de mexer em qualquer coisa, vamos confirmar que o projeto abre e funciona direitinho. Isso evita descobrir um problema de configuração só depois de já ter feito mudanças.</p>
+        <p>No painel <strong>Project</strong>, procure uma pasta chamada <code>Scenes</code> (pode estar em <code>Assets/Scenes</code> ou <code>Assets/_Project/Scenes</code>).</p>
+        <p>Dentro dela, procure arquivos <code>.unity</code>. Nomes possíveis: <code>MainScene</code>, <code>GameScene</code>, <code>Level01</code>, <code>SampleScene</code>.</p>
+        <div class="note plain"><span class="lab">Na dúvida</span>
+          <p>Dê dois cliques na cena principal. Se não souber qual é, tente a que tiver nome mais parecido com <code>MainScene</code> ou <code>SampleScene</code>.</p>
+        </div>
+      </section>
+
+      <section class="card" id="s8">
+        <span class="sec-tag"><span class="n">08</span> Unity</span>
+        <h3>Rodar a cena</h3>
+        <p>Com a cena aberta, é hora do primeiro teste real: apertar Play e ver se o jogo aparece.</p>
+        <ol>
+          <li>Clique no botão de Play (▶) no topo do Unity.</li>
+          <li>Olhe a aba <strong>Game</strong>.</li>
+          <li>Veja se o jogo aparece.</li>
+          <li>Teste as teclas: <code>A</code>/<code>D</code>, setas esquerda/direita, <code>Espaço</code>, <code>W</code>.</li>
+        </ol>
+        <p>Se o personagem não se mexer, pode ser que: o script de movimento ainda não exista, o personagem não esteja configurado, o foco não esteja na aba Game, ou o projeto use outro tipo de input.</p>
+        <div class="note tip"><span class="lab">Dica rápida</span>
+          <p>Clique dentro da aba <strong>Game</strong> antes de testar as teclas.</p>
+        </div>
+        <div class="note warn"><span class="lab">Sobre o personagem e o cenário que você está vendo agora</span>
+          <p>O fantasminha e os cenários que aparecem aqui servem só pra <strong>ensinar o fluxo</strong> — como abrir, testar, entender a estrutura. Mais adiante (nas fases de Personagem e Cenário), cada equipe vai criar os <strong>seus próprios</strong> personagem, expressões e cenário, do jeito que quiser.</p>
+        </div>
+      </section>
+
+      <div style="text-align:center;margin:40px 0;padding:24px 20px;background:linear-gradient(135deg,var(--lilac-100),var(--mint-bg));border-radius:20px;border:1px solid var(--lilac-200)">
+        <p style="margin:0;font-family:'Fraunces',serif;font-weight:700;font-size:1.3rem;color:var(--plum-deep)">🛠️ Testado! Agora é mão na massa.</p>
+        <p style="margin:8px 0 0;color:var(--ink-soft);font-weight:600">A partir daqui, cada fase é uma parte do jogo que vocês vão construir de verdade — não é mais só olhar, é criar.</p>
+      </div>
+
+      <div class="grouphead"><div class="num">5</div><h2>Fase 1 — Personagem</h2></div>
+
+<section class="card" id="s14">
+        <span class="sec-tag"><span class="n">09</span><span class="role-badge" title="Papel: Artista Unity">🎨🕹️</span> Personagem</span>
+        <h3>Como separar sprites de uma imagem</h3>
+        <p>Se a IA gerar uma imagem com várias expressões juntas (<code>idle | happy | sad | surprised | talking</code>), você separa isso dentro do Unity.</p>
+        <ol>
+          <li>Importe a imagem pra <code>Assets/Art/Characters</code>.</li>
+          <li>Clique na imagem no painel <strong>Project</strong>.</li>
+          <li>No Inspector: <code>Texture Type: Sprite (2D and UI)</code>, <code>Sprite Mode: Multiple</code>.</li>
+          <li>Clique em <strong>Sprite Editor</strong>.</li>
+          <li>Clique em <strong>Slice</strong>.</li>
+          <li>Se as imagens estão em grade certinha, escolha <code>Grid by Cell Size</code> (ex: <code>Cell Size X: 512, Y: 512</code>).</li>
+          <li>Clique em <strong>Slice</strong>, depois <strong>Apply</strong>.</li>
+        </ol>
+        <p>Depois disso, ao expandir a imagem no Project, cada sprite aparece separado.</p>
+      </section>
+
+<section class="card" id="s15">
+        <span class="sec-tag"><span class="n">10</span><span class="role-badge" title="Papel: Unity">🕹️</span> Personagem</span>
+        <h3>Como colocar o personagem na cena</h3>
+        <p>Se ainda não existir personagem:</p>
+        <ol>
+          <li>No Project, encontre o sprite do personagem.</li>
+          <li>Arraste pra Scene.</li>
+          <li>Renomeie pra <code>Player</code>.</li>
+          <li>Adicione <code>Rigidbody2D</code> + <code>BoxCollider2D</code> ou <code>CapsuleCollider2D</code> <em>(recomendado — mais arredondado, prende menos nas bordas)</em>.</li>
+          <li>No Rigidbody2D: <code>Gravity Scale: 3</code>, <code>Freeze Rotation Z: marcado</code> (evita que ele tombe).</li>
+        </ol>
+      </section>
+
+      <div class="grouphead"><div class="num">6</div><h2>Fase 2 — Cenário</h2></div>
+
+<section class="card" id="s-cenario-visao">
+        <span class="sec-tag"><span class="n">✦</span><span class="role-badge" title="Papel: Cenário Unity">🏞️🕹️</span> Fase 2</span>
+        <h3>O cenário tem mais que só o chão</h3>
+        <p>Um cenário completo tem três tipos de peça, e cada uma se monta de um jeito diferente:</p>
+        <div class="tbl"><table>
+          <tr><th>Peça</th><th>Precisa de collider?</th><th>Exemplo</th></tr>
+          <tr><td><strong>Chão / plataformas</strong></td><td>Sim — é nelas que o personagem pisa</td><td><code>Ground</code>, plataformas flutuantes</td></tr>
+          <tr><td><strong>Decoração de fundo</strong></td><td>Não — é só visual, ninguém colide com ela</td><td>Paredes, tubos, computadores, terminais, caixas</td></tr>
+          <tr><td><strong>Obstáculos</strong></td><td>Sim, mas como <em>trigger</em> (detecta sem travar)</td><td>Energy barrier, laser — ficam na Fase Mecânica</td></tr>
+        </table></div>
+        <p>Esta fase foca no <strong>chão/plataformas</strong> (seções abaixo), que é a parte que precisa de física e por isso é a mais delicada de configurar certo.</p>
+        <p>A <strong>decoração</strong> é bem mais simples — pra cada elemento (parede, tubo, computador, caixa):</p>
+        <ol>
+          <li>Arraste o sprite do elemento pra <strong>Scene</strong>.</li>
+          <li>Posicione onde quiser com o <strong>Transform</strong>.</li>
+          <li>Prontinho — sem componente extra, a menos que você queira que o personagem bata nela (nesse caso, trate como chão: adicione um <code>BoxCollider2D</code>).</li>
+        </ol>
+        <div class="note plain"><span class="lab">Sobre profundidade (Sorting Layer)</span>
+          <p>Quando várias imagens se sobrepõem (ex: o personagem passando na frente de uma parede), o Unity decide o que aparece na frente usando <code>Sorting Layer</code> e <code>Order in Layer</code>, no componente Sprite Renderer. Número maior = aparece mais na frente.</p>
+        </div>
+      </section>
+
+<section class="card" id="s9">
+        <span class="sec-tag"><span class="n">11</span><span class="role-badge" title="Papel: Unity">🕹️</span> Chão</span>
+        <h3>Como saber onde está o chão</h3>
+        <p>Na <strong>Hierarchy</strong>, procure nomes como <code>Ground</code>, <code>Floor</code>, <code>Platform</code>, <code>Tilemap</code>, <code>Level</code>, <code>Terrain</code>.</p>
+        <ul>
+          <li>Chão simples → no Inspector: <code>Transform</code>, <code>Sprite Renderer</code>, <code>BoxCollider2D</code>.</li>
+          <li>Tilemap → <code>Tilemap</code>, <code>Tilemap Renderer</code>, <code>Tilemap Collider 2D</code>.</li>
+        </ul>
+        <div class="note plain"><span class="lab">Em palavras simples</span>
+          <p><strong>Box Collider 2D</strong> é um <em>component</em> (lembra da seção 6?) que você anexa num GameObject pra dar a ele uma área invisível de colisão. Não precisa ser igualzinho ao desenho — pode ser uma aproximação.</p>
+        </div>
+      </section>
+
+<section class="card" id="s10">
+        <span class="sec-tag"><span class="n">12</span><span class="role-badge" title="Papel: Unity">🕹️</span> Chão</span>
+        <h3>Como colocar chão na cena</h3>
+        <p>Existem dois jeitos de fazer isso — escolha o mais simples pro momento.</p>
+        <h4>Jeito 1 — Objeto simples com Sprite <em>(mais fácil)</em></h4>
+        <ol>
+          <li>No painel <strong>Hierarchy</strong>, clique com botão direito.</li>
+          <li>Vá em <code>2D Object &gt; Sprite</code>.</li>
+          <li>Renomeie pra <code>Ground</code>.</li>
+          <li>No <strong>Sprite Renderer</strong>, coloque o sprite de chão.</li>
+          <li>Posicione com o Transform (ex: <code>Position X: 0, Y: -3, Z: 0</code>).</li>
+          <li>Adicione um collider: <code>Add Component &gt; Box Collider 2D</code>.</li>
+        </ol>
+        <p>Agora o chão tem “corpo” pro personagem pisar.</p>
+        <h4>Jeito 2 — Usando Tilemap <em>(melhor pra fases com blocos)</em></h4>
+        <p><strong>Tilemap</strong> é uma grade — pensa num quadriculado de papel — onde você "pinta" blocos repetidos (tiles) pra montar o cenário, tipo Lego. É melhor que o Jeito 1 quando você tem muitos blocos parecidos: paredes longas, chão irregular, várias plataformas.</p>
+        <p>O caminho, com cada passo explicado:</p>
+        <ol>
+          <li><strong>Importar o tileset</strong> — arraste pra <code>Assets</code> a imagem com todos os blocos (ex: os 20 tiles do prompt da seção 31).</li>
+          <li><strong>Separar no Sprite Editor</strong> — igual à seção "Separar sprites": cada bloquinho da imagem precisa virar um sprite individual, fatiado em grade.</li>
+          <li><strong>Criar uma Tile Palette</strong> — é a "caixa de tintas": <code>Window &gt; 2D &gt; Tile Palette &gt; Create New Palette</code>, depois arraste os sprites separados pra dentro dela.</li>
+          <li><strong>Pintar a fase</strong> — com a Tile Palette aberta, escolha um tile e clique na Scene pra "pintar" ele na grade, como um pincel.</li>
+          <li><strong>Adicionar o Tilemap Collider 2D</strong> — no GameObject <code>Grid</code>/<code>Tilemap</code> que foi criado automaticamente, adicione esse component pro personagem conseguir pisar nos blocos pintados.</li>
+        </ol>
+        <div class="note tip"><span class="lab">Pra começar</span>
+          <p>No evento, se estiver começando, use o jeito simples primeiro: objeto com sprite + BoxCollider2D.</p>
+        </div>
+      </section>
+
+<section class="card" id="s11">
+        <span class="sec-tag"><span class="n">13</span><span class="role-badge" title="Papel: Unity">🕹️</span> Chão</span>
+        <h3>Como fazer o chão crescer</h3>
+        <p>Depende de como o chão foi montado na sua fase:</p>
+        <h4>Se o chão for um GameObject simples</h4>
+        <p>Clique em <code>Ground</code> → Inspector → <code>Transform</code>. Pra deixar mais largo, mude o <code>Scale X</code> (ex: <code>X: 10, Y: 1, Z: 1</code>). Pra mais alto: <code>Scale Y: 2</code>. O collider geralmente cresce junto se estiver no mesmo objeto.</p>
+        <h4>Se o chão for um Tilemap</h4>
+        <p>Você não “estica” o chão — pinta mais bloquinhos usando a janela <strong>Tile Palette</strong>.</p>
+      </section>
+
+<section class="card" id="s12">
+        <span class="sec-tag"><span class="n">14</span><span class="role-badge" title="Papel: Unity">🕹️</span> Chão</span>
+        <h3>Como fazer o chão ficar fixo</h3>
+        <p>Pra ficar parado, o chão <strong>não deve ter Rigidbody2D dinâmico</strong>. Ele precisa de <code>Sprite Renderer</code> + <code>BoxCollider2D</code>, e normalmente <strong>não precisa</strong> de Rigidbody2D.</p>
+        <div class="note plain"><span class="lab">Se tiver Rigidbody2D</span>
+          <p>Confira se está como <code>Body Type: Static</code>. O chão é o objeto parado; quem se mexe é o personagem.</p>
+        </div>
+      </section>
+
+      <div class="grouphead"><div class="num">7</div><h2>Fase 3 — Hardware</h2></div>
+
+      <section class="card" id="s-hw-resumo">
+        <span class="sec-tag"><span class="n">🔌</span><span class="role-badge" title="Papel: Hardware">🔌</span> Fase 3</span>
+        <h3>Hardware: visão geral</h3>
+        <p>Enquanto as fases de Personagem e Cenário cuidam do que aparece na tela, esta fase cuida do que existe <strong>fisicamente na mesa</strong>: o ESP32 (uma placinha) e o OLED (uma telinha), que vão reagir ao jogo com carinhas.</p>
+        <div class="ascii">ESP32 → placa física, conecta ao computador por USB
+OLED  → telinha ligada no ESP32, mostra as expressões</div>
+        <p>Nesta fase, a pessoa de <strong>Hardware</strong> cuida de: ligar o OLED no ESP32, escrever o código que desenha as carinhas, e testar se ele funciona sozinho — antes de conectar com o Unity.</p>
+        <div class="note plain"><span class="lab">Os detalhes completos estão mais adiante</span>
+          <p>Ligações, código do ESP32/OLED e como testar tudo (sozinho e junto com o Unity) têm uma seção própria, mais pra frente neste guia, no grupo <strong>"ESP32 e OLED na prática"</strong>. Aqui é só pra ter o panorama antes de seguir pras próximas fases.</p>
+        </div>
+      </section>
+
+      <div class="grouphead"><div class="num">8</div><h2>Fase 4 — Mecânica</h2></div>
+
+<section class="card" id="s13">
+        <span class="sec-tag"><span class="n">15</span><span class="role-badge" title="Papel: Unity">🕹️</span> Personagem</span>
+        <h3>Como colocar o personagem em cima do chão</h3>
+        <p>Se o personagem aparecer flutuando ou enterrado no chão, é só ajustar a posição de um dos dois.</p>
+        <ol>
+          <li>Clique no personagem na Hierarchy.</li>
+          <li>No Inspector, olhe o <code>Transform</code>.</li>
+          <li>Ajuste a posição (ex: <code>X: 0, Y: 0, Z: 0</code>).</li>
+          <li>Clique no chão e veja onde ele está (ex: <code>Ground Y: -3</code>).</li>
+          <li>O personagem precisa estar acima (ex: <code>Player Y: -1</code>).</li>
+        </ol>
+        <p>Se ele estiver dentro do chão, pode travar ou ser empurrado. Se estiver muito alto, vai cair até encostar.</p>
+        <div class="note tip"><span class="lab">Pra funcionar</span>
+          <p>Personagem precisa de <code>Rigidbody2D</code> + <code>Collider2D</code>; chão precisa de <code>BoxCollider2D</code>.</p>
+        </div>
+      </section>
+
+<section class="card" id="s16">
+        <span class="sec-tag"><span class="n">16</span><span class="role-badge" title="Papel: Gameplay Unity">⚙️🕹️</span> Personagem</span>
+        <h3>Como fazer o personagem andar</h3>
+        <div class="note tip"><span class="lab">O projeto já traz o PlayerController</span>
+          <p>Tem um <code>PlayerController.cs</code> pronto em <code>Assets/Scripts</code>. Ele foi feito pra andar com os <strong>botões físicos do ESP32</strong> — e já vem com um <strong>fallback de teclado/gamepad</strong> embutido, pra vocês testarem mesmo sem o controle. Você só precisa configurar.</p>
+        </div>
+        <h4>Como funciona por dentro</h4>
+        <p>No <code>FixedUpdate</code>, ele pergunta pro <code>ESP32SerialReader</code> se os botões <code>ButtonRight</code>/<code>ButtonLeft</code> estão pressionados pra andar, e usa o <code>JumpPressed</code> pra pular. Se não houver ESP32 (ou se o modo teclado estiver ligado), ele usa o teclado pelo New Input System. Detecta o chão com <code>Physics2D.OverlapCircle</code> numa Layer, e vira o sprite mudando o <code>localScale</code>.</p>
+        <h4>Como configurar no Player</h4>
+        <ol>
+          <li>Confirme que o Player tem <code>Rigidbody2D</code> e <code>Animator</code> — o script exige os dois (<code>[RequireComponent]</code>).</li>
+          <li>Pro teclado funcionar como fallback, adicione um componente <code>PlayerInput</code>: em <code>Actions</code>, aponte pro asset <code>InputSystem_Actions</code>; em <code>Behavior</code>, escolha <strong>Send Messages</strong> (é assim que os métodos <code>OnMove</code>/<code>OnJump</code> são chamados).</li>
+          <li>Configure a Layer <code>Ground</code> e o <code>Ground Check</code> (explicado na próxima seção) — o script usa isso pra saber quando pode pular.</li>
+          <li>No <code>Animator</code> do Player, crie um parâmetro <code>Bool</code> chamado exatamente <code>IsMoving</code> — é o único que o script controla (liga a animação de andar).</li>
+        </ol>
+        <div class="note tip"><span class="lab">Testando sem a placa</span>
+          <p>No Inspector do <code>PlayerController</code> existe uma opção <code>Force Keyboard Fallback</code>. Marque ela pra ignorar o ESP32 e mover só pelo teclado/gamepad — perfeito enquanto o hardware ainda não está pronto. Desmarque quando for usar o controle físico.</p>
+        </div>
+        <div class="note plain"><span class="lab">Se o personagem não andar</span>
+          <p>Confira, nessa ordem: pra testar no teclado, o <code>Force Keyboard Fallback</code> está marcado e o <code>PlayerInput</code> está configurado com Send Messages? A Layer <code>Ground</code> está no campo certo e o <code>Ground Check</code> está posicionado na base do personagem? O Animator tem o parâmetro Bool <code>IsMoving</code> com esse nome exato?</p>
+        </div>
+      </section>
+
+<section class="card" id="s17">
+        <span class="sec-tag"><span class="n">17</span><span class="role-badge" title="Papel: Unity">🕹️</span> Personagem</span>
+        <h3>Como fazer o personagem reconhecer o chão</h3>
+        <div class="note plain"><span class="lab">O PlayerController usa Layer, não Tag</span>
+          <p>Pra saber quando pode pular, o script checa o chão com <code>Physics2D.OverlapCircle</code> numa <strong>Layer</strong> chamada <code>Ground</code> — e num pontinho (<code>Ground Check</code>) na base do personagem.</p>
+        </div>
+        <h4>Passo 1 — criar/aplicar a Layer Ground</h4>
+        <ol>
+          <li>Clique no objeto do chão.</li>
+          <li>No topo do Inspector, veja o campo <code>Layer</code> (é diferente do campo <code>Tag</code>, ao lado).</li>
+          <li>Clique em <code>Layer</code> → <strong>Add Layer...</strong>, escreva <code>Ground</code> numa linha vazia.</li>
+          <li>Volte no objeto do chão e selecione a Layer <code>Ground</code>.</li>
+          <li>No <code>PlayerController</code> do Player, arraste essa Layer pro campo <code>Ground Layer</code>.</li>
+        </ol>
+        <h4>Passo 2 — criar o Ground Check</h4>
+        <ol>
+          <li>No Player, crie um GameObject filho vazio (botão direito no Player → <code>Create Empty</code>).</li>
+          <li>Renomeie pra <code>GroundCheck</code> e posicione ele bem na <strong>base</strong> do personagem (nos pés).</li>
+          <li>Arraste esse <code>GroundCheck</code> pro campo <code>Ground Check</code> do <code>PlayerController</code>.</li>
+        </ol>
+        <div class="note tip"><span class="lab">Dica visual</span>
+          <p>Quando você seleciona o Player, aparece um círculo colorido nos pés dele (verde quando está no chão, vermelho no ar). Se ele não encostar no chão visualmente, ajuste a posição do <code>GroundCheck</code> ou o <code>Ground Check Radius</code>.</p>
+        </div>
+      </section>
+
+<section class="card" id="s18">
+        <span class="sec-tag"><span class="n">18</span><span class="role-badge" title="Papel: Unity Gameplay">🕹️⚙️</span> Personagem</span>
+        <h3>Como fazer funcionar no Play</h3>
+        <p class="chk-sub">Player precisa ter:</p>
+        <ul class="check" data-key="s18a">
+          <li><label><input type="checkbox"><span>Sprite Renderer</span></label></li>
+          <li><label><input type="checkbox"><span>Rigidbody2D</span></label></li>
+          <li><label><input type="checkbox"><span>Collider2D</span></label></li>
+          <li><label><input type="checkbox"><span>Animator (com o parâmetro IsMoving)</span></label></li>
+          <li><label><input type="checkbox"><span>PlayerController</span></label></li>
+          <li><label><input type="checkbox"><span>PlayerInput (pro fallback de teclado)</span></label></li>
+          <li><label><input type="checkbox"><span>GroundCheck (filho, na base)</span></label></li>
+          <li><label><input type="checkbox"><span>Tag Player</span></label></li>
+        </ul>
+        <p class="chk-sub">Ground precisa ter:</p>
+        <ul class="check" data-key="s18b">
+          <li><label><input type="checkbox"><span>Sprite Renderer</span></label></li>
+          <li><label><input type="checkbox"><span>Collider2D</span></label></li>
+          <li><label><input type="checkbox"><span>Layer Ground</span></label></li>
+          <li><label><input type="checkbox"><span>Ficar abaixo do Player</span></label></li>
+        </ul>
+        <p class="chk-sub">A cena precisa ter:</p>
+        <ul class="check" data-key="s18c">
+          <li><label><input type="checkbox"><span>Main Camera apontando pro jogo</span></label></li>
+          <li><label><input type="checkbox"><span>Canvas, se tiver HUD/painel</span></label></li>
+          <li><label><input type="checkbox"><span>GameManager (conta os coletáveis)</span></label></li>
+          <li><label><input type="checkbox"><span>ESP32SerialReader, pra falar com o hardware</span></label></li>
+        </ul>
+        <div class="note plain"><span class="lab">No Play</span>
+          <p>Com o <code>Force Keyboard Fallback</code> marcado, clique na aba Game → aperte as setas/A/D → Espaço pra pular. Se nada acontecer, olhe a <strong>Console</strong>.</p>
+        </div>
+      </section>
+
+<section class="card" id="s19">
+        <span class="sec-tag"><span class="n">19</span><span class="role-badge" title="Papel: Gameplay">⚙️</span> Itens</span>
+        <h3>Como criar itens coletáveis</h3>
+        <div class="note tip"><span class="lab">O script já existe: Collectible.cs</span>
+          <p>O projeto já traz o <code>Collectible.cs</code> em <code>Assets/Scripts</code>. Você não precisa programar nada — só montar o item na cena e anexar esse script.</p>
+        </div>
+        <ol>
+          <li>Arraste o sprite do item pra Scene, renomeie pra <code>Microchip</code>.</li>
+          <li>Adicione <code>CircleCollider2D</code> ou <code>BoxCollider2D</code>.</li>
+          <li>Marque <code>Is Trigger</code>.</li>
+          <li>Arraste o script <code>Collectible</code> pra esse objeto.</li>
+        </ol>
+        <div class="note plain"><span class="lab">O que é um trigger</span>
+          <p>Um trigger não bloqueia o personagem fisicamente — ele só <strong>detecta</strong> quando outro collider passa por ele.</p>
+        </div>
+        <p>Quando o Player encosta, o <code>Collectible</code> avisa o <code>GameManager</code> (<code>OnItemCollected</code>), manda a carinha feliz pro OLED (<code>SendTreasure</code>), toca um efeito/som opcional e some. Referência:</p>
+        <div class="codebox"><div class="head"><span>referência · Collectible.cs (resumo)</span><button class="copy">Copiar</button></div><pre><span class="kw">private void</span> <span class="fn">OnTriggerEnter2D</span>(Collider2D other)
+{
+    <span class="kw">if</span> (!other.<span class="fn">CompareTag</span>(<span class="st">"Player"</span>)) <span class="kw">return</span>;
+
+    GameManager.Instance?.<span class="fn">OnItemCollected</span>();      <span class="cm">// conta o item</span>
+    ESP32SerialReader.Instance?.<span class="fn">SendTreasure</span>();  <span class="cm">// carinha feliz no OLED</span>
+
+    <span class="cm">// efeito e som são opcionais (campos no Inspector)</span>
+    <span class="fn">Destroy</span>(gameObject);
+}</pre></div>
+        <div class="note warn"><span class="lab">Importante</span>
+          <p>Pra <code>OnTriggerEnter2D</code> funcionar, um dos objetos precisa ter Rigidbody2D (o Player já tem). E o <code>Player</code> precisa ter a <strong>Tag</strong> <code>Player</code> — crie em <code>Edit &gt; Project Settings &gt; Tags</code> (é Tag, não Layer). Nos campos do Inspector do item dá pra arrastar, se quiser, um prefab de partícula (<code>Collect Effect</code>) e um som (<code>Collect Sound</code>).</p>
+        </div>
+        <div class="note tip"><span class="lab">A partir do segundo item</span>
+          <p>Depois que o primeiro <code>Microchip</code> estiver funcionando, os próximos (<code>EnergyCrystal</code>, <code>ByteCube</code>) ficam rápidos: botão direito na Hierarchy → <strong>Duplicate</strong> → renomeie → troque o sprite → posicione. O script já vem junto.</p>
+        </div>
+      </section>
+
+<section class="card" id="s20">
+        <span class="sec-tag"><span class="n">20</span><span class="role-badge" title="Papel: Gameplay">⚙️</span> Obstáculos</span>
+        <h3>Como criar obstáculos</h3>
+        <div class="note plain"><span class="lab">Esse aqui você cria</span>
+          <p>Diferente dos itens, não existe um script de obstáculo pronto no projeto — então esse você monta. É bem parecido com o coletável: um trigger que reage ao Player. Crie o primeiro; os outros são duplicados dele.</p>
+        </div>
+        <p>Os 3 obstáculos pedidos:</p>
+        <ul class="check" data-key="s20">
+          <li><label><input type="checkbox"><span>Energy barrier</span></label></li>
+          <li><label><input type="checkbox"><span>Laser emitter</span></label></li>
+          <li><label><input type="checkbox"><span>Broken robot</span></label></li>
+        </ul>
+        <ol>
+          <li>Arraste o sprite pra Scene, renomeie (ex: <code>EnergyBarrier</code>).</li>
+          <li>Adicione <code>BoxCollider2D</code> e marque <code>Is Trigger</code>.</li>
+          <li>Peça pro <strong>Kiro</strong> criar o script (prompt abaixo) e arraste-o no objeto.</li>
+        </ol>
+        <div class="codebox"><div class="head"><span>kiro · obstáculo</span><button class="copy">Copiar</button></div><pre>Create a new Obstacle script for a 2D platformer.
+On trigger with the Player (tag "Player"), call ESP32SerialReader.Instance?.SendDamage()
+to show the damage face on the OLED.
+Keep it simple and consistent with the existing Collectible script.
+Explain the code.</pre></div>
+        <p>Referência do que esperar (mesmo estilo do <code>Collectible</code>):</p>
+        <div class="codebox"><div class="head"><span>referência · Obstacle.cs</span><button class="copy">Copiar</button></div><pre><span class="kw">using</span> UnityEngine;
+
+<span class="kw">public class</span> <span class="fn">Obstacle</span> : MonoBehaviour
+{
+    <span class="kw">private void</span> <span class="fn">OnTriggerEnter2D</span>(Collider2D other)
+    {
+        <span class="kw">if</span> (!other.<span class="fn">CompareTag</span>(<span class="st">"Player"</span>)) <span class="kw">return</span>;
+
+        <span class="cm">// carinha de dano no OLED</span>
+        ESP32SerialReader.Instance?.<span class="fn">SendDamage</span>();
+
+        <span class="cm">// aqui a equipe decide o efeito: empurrar, voltar ao início, etc.</span>
+    }
+}</pre></div>
+        <div class="note plain"><span class="lab">E o "perder vida"?</span>
+          <p>O projeto-base não tem sistema de vidas — bater num obstáculo só dispara a carinha de dano. Se a equipe quiser algo mais (voltar o Player pro início, contar vidas, tela de derrota), dá pra adicionar como personalização. O essencial pro mínimo é a reação no OLED.</p>
+        </div>
+        <div class="note tip"><span class="lab">A partir do segundo obstáculo</span>
+          <p>Com o primeiro pronto: botão direito → <strong>Duplicate</strong> → renomeie (<code>LaserEmitter</code>, <code>BrokenRobot</code>) → troque o sprite → posicione. O script já vem junto.</p>
+        </div>
+      </section>
+
+<section class="card" id="s21">
+        <span class="sec-tag"><span class="n">21</span><span class="role-badge" title="Papel: Gameplay">⚙️</span> Regras</span>
+        <h3>O GameManager (coletar tudo pra vencer)</h3>
+        <div class="note tip"><span class="lab">O script já existe: GameManager.cs</span>
+          <p>Está em <code>Assets/Scripts</code>. No projeto-base, a regra é simples: ele <strong>conta quantos coletáveis existem na cena</strong> e, quando você pega o <strong>último</strong>, mostra o painel de fim e manda a carinha feliz pro OLED. Não tem contador de pontos nem vidas — é "pegue todos pra vencer".</p>
+        </div>
+        <h4>Como configurar</h4>
+        <ol>
+          <li>Crie um GameObject vazio na cena, chame de <code>GameManager</code>.</li>
+          <li>Arraste o script <code>GameManager</code> pra ele.</li>
+          <li>No Inspector, arraste o painel de fim de jogo pro campo <code>Game Over Panel</code> (veja a HUD, próxima seção).</li>
+          <li>No campo <code>Scene Name</code>, coloque o nome exato da cena (pra reiniciar) — confira em <code>File &gt; Build Settings</code>.</li>
+        </ol>
+        <p>Referência de como ele funciona:</p>
+        <div class="codebox"><div class="head"><span>referência · GameManager.cs (resumo)</span><button class="copy">Copiar</button></div><pre><span class="kw">private void</span> <span class="fn">Awake</span>()
+{
+    Instance = <span class="kw">this</span>;
+    <span class="cm">// conta todos os coletáveis da cena ao iniciar</span>
+    _totalCollectibles = <span class="fn">FindObjectsByType</span>&lt;Collectible&gt;(FindObjectsSortMode.None).Length;
+}
+
+<span class="cm">// chamado por cada Collectible ao ser pego</span>
+<span class="kw">public void</span> <span class="fn">OnItemCollected</span>()
+{
+    _collectedCount++;
+    <span class="kw">if</span> (_collectedCount &gt;= _totalCollectibles)
+        <span class="fn">ShowGameOver</span>();  <span class="cm">// mostra painel + SendTreasure()</span>
+}</pre></div>
+        <div class="note plain"><span class="lab">Não esqueça de conectar no Inspector</span>
+          <p>Depois de anexar o script, você ainda precisa arrastar o <strong>painel de fim de jogo</strong> pro campo <code>Game Over Panel</code> e preencher o <code>Scene Name</code> — isso é sempre manual.</p>
+        </div>
+        <div class="note tip"><span class="lab">Quer um placar de pontos? (desafio extra)</span>
+          <p>O mínimo do desafio pede "sistema de pontuação". O jeito mais simples aqui é tratar <strong>cada item coletado como 1 ponto</strong> (o <code>GameManager</code> já conta isso em <code>_collectedCount</code>). Se quiserem um número na tela crescendo, dá pra pedir pro Kiro adicionar um <code>TMP_Text</code> que mostra "Coletados: X / Y" a cada <code>OnItemCollected</code>.</p>
+        </div>
+        <div class="note tip"><span class="lab">✅ Teste agora</span>
+          <p>Aperte Play e colete <strong>todos</strong> os itens da cena. Ao pegar o último, o painel de fim deve aparecer e o jogo pausar. Se não aparecer, confira se o <code>Game Over Panel</code> está no campo do Inspector.</p>
+        </div>
+      </section>
+
+<section class="card" id="s22">
+        <span class="sec-tag"><span class="n">22</span><span class="role-badge" title="Papel: Gameplay Unity">⚙️🕹️</span> HUD</span>
+        <h3>Como montar a HUD</h3>
+        <p>A HUD pode mostrar: pontuação, vidas, tempo, tela de vitória, tela de derrota.</p>
+        <h4>Criar o Score Text</h4>
+        <ol>
+          <li>Na Hierarchy, botão direito → <code>UI &gt; Text - TextMeshPro</code>.</li>
+          <li>Se pedir pra importar TMP Essentials, aceite.</li>
+          <li>Renomeie pra <code>ScoreText</code> e escreva <code>Score: 0</code>.</li>
+          <li>Posicione no canto superior da tela.</li>
+        </ol>
+        <p>Depois, no objeto <code>GameManager</code>, arraste o <code>ScoreText</code> pro campo <code>scoreText</code>.</p>
+      </section>
+
+<section class="card" id="s29">
+        <span class="sec-tag"><span class="n">23</span><span class="role-badge" title="Papel: Gameplay">⚙️</span> Fase</span>
+        <h3>Como criar o final da fase (LevelEnd)</h3>
+        <div class="note tip"><span class="lab">O script já existe: LevelEnd.cs</span>
+          <p>Está em <code>Assets/Scripts</code>. É o objeto no fim da fase que, quando o Player toca, mostra o painel de fim e manda a carinha feliz pro OLED.</p>
+        </div>
+        <ol>
+          <li>Crie um objeto vazio: <code>Create Empty</code>, renomeie pra <code>LevelEnd</code>.</li>
+          <li>Adicione <code>BoxCollider2D</code> e marque <code>Is Trigger</code>.</li>
+          <li>Posicione no fim da fase.</li>
+          <li>Arraste o script <code>LevelEnd</code> pra ele.</li>
+          <li>No Inspector, arraste o painel de fim pro campo <code>Game Over Panel</code> e preencha o <code>Scene Name</code> (pra reiniciar).</li>
+        </ol>
+        <p>Referência do que ele faz:</p>
+        <div class="codebox"><div class="head"><span>referência · LevelEnd.cs (resumo)</span><button class="copy">Copiar</button></div><pre><span class="kw">private void</span> <span class="fn">OnTriggerEnter2D</span>(Collider2D other)
+{
+    <span class="kw">if</span> (!other.<span class="fn">CompareTag</span>(<span class="st">"Player"</span>)) <span class="kw">return</span>;
+
+    <span class="kw">if</span> (gameOverPanel != <span class="kw">null</span>)
+        gameOverPanel.<span class="fn">SetActive</span>(<span class="kw">true</span>);   <span class="cm">// mostra o painel</span>
+
+    Time.timeScale = 0f;                    <span class="cm">// pausa o jogo</span>
+    ESP32SerialReader.Instance?.<span class="fn">SendTreasure</span>(); <span class="cm">// carinha feliz</span>
+}</pre></div>
+        <div class="note plain"><span class="lab">Botão de "Jogar de novo"</span>
+          <p>O <code>LevelEnd</code> (e o <code>GameManager</code>) têm um método <code>RestartGame()</code>. Pra usar, coloque um botão no painel e, no evento de clique (<code>OnClick</code>) do Inspector, aponte pra esse método — ele recarrega a cena.</p>
+        </div>
+      </section>
+
+<section class="card" id="s28">
+        <span class="sec-tag"><span class="n">24</span><span class="role-badge" title="Papel: Unity Gameplay">🕹️⚙️</span> Fase</span>
+        <h3>Como montar a fase mínima</h3>
+        <p>Uma sugestão simples de como distribuir itens e obstáculos ao longo da fase:</p>
+        <div class="ascii">Início → Item 1 → Obstáculo 1 → Item 2 → Obstáculo 2 → Item 3 → Obstáculo 3 → Final</div>
+        <p>Organização sugerida na Hierarchy:</p>
+        <div class="ascii">Level
+├── Ground
+├── Platforms
+├── Obstacles
+│   ├── EnergyBarrier
+│   ├── LaserEmitter
+│   └── BrokenRobot
+├── Collectibles
+│   ├── Microchip
+│   ├── EnergyCrystal
+│   └── ByteCube
+└── LevelEnd</div>
+      </section>
+
+      <div class="grouphead"><div class="num">9</div><h2>ESP32 e OLED na prática</h2></div>
+
+<section class="card" id="s-oled">
+        <span class="sec-tag"><span class="n">✦</span><span class="role-badge" title="Papel: Hardware">🔌</span> Contexto</span>
+        <h3>O que é o OLED e por que as carinhas importam</h3>
+        <div class="note plain"><span class="lab">O componente</span>
+          <p>O <strong>OLED</strong> é uma telinha pequena (normalmente o modelo <code>SSD1306</code>, monocromática, com uns 128×64 pixels) ligada ao <strong>ESP32</strong>. É nela que aparecem as <strong>carinhas do fantasminha</strong> reagindo ao que acontece no jogo. Ela se conecta ao ESP32 por 4 fios (I2C): energia, terra, <code>SDA</code> e <code>SCL</code> — o passo a passo das ligações está na seção 24.</p>
+        </div>
+        <p>As carinhas são o <strong>coração do projeto</strong>: sem elas, o jogo seria só mais um jogo na tela. É a expressão no OLED que faz o jogo “sair da tela” e reagir no mundo real — quando você pega um item, uma telinha física ali do lado fica feliz.</p>
+        <p>No projeto, são <strong>três carinhas</strong>. O Unity manda uma letra pela Serial, o ESP32 recebe e desenha a expressão certa:</p>
+        <div class="tbl"><table>
+          <tr><th>Letra</th><th>Carinha</th><th>Quando aparece</th></tr>
+          <tr><td><code>I</code></td><td>neutra <span style="color:var(--ink-soft)">(O_O)</span></td><td>jogo rodando normal</td></tr>
+          <tr><td><code>T</code></td><td>feliz <span style="color:var(--ink-soft)">(^u^)</span></td><td>pegou um item / venceu</td></tr>
+          <tr><td><code>D</code></td><td>assustada <span style="color:var(--ink-soft)">(&gt;_&lt;)</span></td><td>bateu num obstáculo</td></tr>
+        </table></div>
+        <div class="note tip"><span class="lab">Quer mais expressões?</span>
+          <p>Essas três são o suficiente pro jogo funcionar. Expressões a mais (surpresa, comemoração…) são uma <strong>personalização</strong> — dá pra criar novas letras/métodos no <code>ESP32SerialReader</code> e novas carinhas no firmware.</p>
+        </div>
+        <div class="note tip"><span class="lab">Duas “carinhas” diferentes — não confunda</span>
+          <p>As expressões podem aparecer em <strong>dois lugares</strong>: (1) no <strong>personagem dentro do jogo</strong>, que usa o sprite gerado no ChatGPT (seção 31, trocado pelo Sprite Renderer); e (2) na <strong>telinha OLED</strong>, onde as carinhas são desenhadas pelo código do ESP32. Podem ter o mesmo estilo pra ficar bonito, mas são feitas de formas diferentes.</p>
+        </div>
+      </section>
+
+<section class="card" id="s-controle">
+        <span class="sec-tag"><span class="n">✦</span><span class="role-badge" title="Papel: Hardware Gameplay">🔌⚙️</span> Comunicação</span>
+        <h3>O controle físico e as reações do OLED</h3>
+        <p>O cabo USB é uma <strong>via de mão dupla</strong>: o ESP32 é um <strong>controle físico</strong> (você aperta um botão na placa e o personagem anda), e o Unity manda de volta a <strong>reação</strong> que aparece no OLED. No projeto, quem cuida disso é o script <code>ESP32SerialReader</code>.</p>
+        <div class="ascii">CONTROLE → JOGO   ESP32 manda os botões  →  Unity move o personagem
+JOGO → OLED       Unity manda a reação   →  ESP32 desenha a carinha</div>
+
+        <h4>ESP32 → Unity (os botões)</h4>
+        <p>O ESP32 avisa quando um botão é <strong>pressionado</strong> e quando é <strong>solto</strong>:</p>
+        <div class="tbl"><table>
+          <tr><th>Mensagem</th><th>Significa</th></tr>
+          <tr><td><code>L1</code> / <code>L0</code></td><td>esquerda pressionada / solta</td></tr>
+          <tr><td><code>R1</code> / <code>R0</code></td><td>direita pressionada / solta</td></tr>
+          <tr><td><code>D1</code> / <code>D0</code></td><td>baixo pressionado / solto (reservado)</td></tr>
+          <tr><td><code>U</code></td><td>pulo</td></tr>
+        </table></div>
+
+        <h4>Unity → OLED (as reações)</h4>
+        <p>São só <strong>três</strong> carinhas, cada uma é uma letra:</p>
+        <div class="tbl"><table>
+          <tr><th>Letra</th><th>Carinha</th><th>Método no código</th></tr>
+          <tr><td><code>I</code></td><td>neutra <span style="color:var(--ink-soft)">(O_O)</span></td><td><code>SendIdle()</code></td></tr>
+          <tr><td><code>T</code></td><td>feliz / pegou tesouro <span style="color:var(--ink-soft)">(^u^)</span></td><td><code>SendTreasure()</code></td></tr>
+          <tr><td><code>D</code></td><td>assustada / levou dano <span style="color:var(--ink-soft)">(&gt;_&lt;)</span></td><td><code>SendDamage()</code></td></tr>
+        </table></div>
+        <p>Do lado do Unity, mandar uma reação é só chamar o método pelo singleton do <code>ESP32SerialReader</code>:</p>
+        <div class="codebox"><div class="head"><span>enviar reação · C#</span><button class="copy">Copiar</button></div><pre><span class="cm">// carinha feliz (pegou item / venceu)</span>
+ESP32SerialReader.Instance?.<span class="fn">SendTreasure</span>();
+
+<span class="cm">// carinha de dano</span>
+ESP32SerialReader.Instance?.<span class="fn">SendDamage</span>();
+
+<span class="cm">// carinha neutra</span>
+ESP32SerialReader.Instance?.<span class="fn">SendIdle</span>();</pre></div>
+        <div class="note tip"><span class="lab">Quer mais carinhas? (desafio extra)</span>
+          <p>O projeto vem com essas três (I, T, D). Se a equipe quiser expressões a mais — tipo comemorando ou surpresa —, dá pra criar novos métodos no <code>ESP32SerialReader</code> (ex: um <code>SendCelebrating()</code> que manda uma letra nova) e tratar essa letra no firmware do ESP32. É opcional, pra quem quiser ir além do mínimo.</p>
+        </div>
+      </section>
+
+<section class="card" id="s23">
+        <span class="sec-tag"><span class="n">25</span><span class="role-badge" title="Papel: Gameplay Hardware">⚙️🔌</span> Serial</span>
+        <h3>Comunicação Serial no Unity (ESP32SerialReader)</h3>
+        <div class="note warn"><span class="lab">Configuração obrigatória do .NET no Unity</span>
+          <p>Por padrão o Unity <strong>não</strong> deixa usar <code>SerialPort</code>. Vá em <code>Edit &gt; Project Settings &gt; Player &gt; Other Settings</code>, ache <code>Api Compatibility Level</code> e troque pra <strong>.NET Framework</strong>. Sem isso, <code>System.IO.Ports.SerialPort</code> nem existe e dá <strong>erro de compilação</strong>.</p>
+        </div>
+        <p>O projeto já traz o script <code>ESP32SerialReader.cs</code> em <code>Assets/Scripts</code>. Ele cuida das duas pontas da conversa: <strong>recebe</strong> os botões do controle e <strong>envia</strong> as reações pro OLED. Você não precisa criar — só configurar.</p>
+        <h4>Como configurar</h4>
+        <ol>
+          <li>Crie um GameObject vazio na cena e chame de <code>ESP32SerialReader</code> (ou coloque o script num objeto que já exista).</li>
+          <li>Arraste o script <code>ESP32SerialReader</code> pra esse objeto.</li>
+          <li>No Inspector, ajuste o <code>Port Name</code>: no <strong>Windows</strong> é algo como <code>COM3</code>; no <strong>Mac</strong>, algo como <code>/dev/tty.usbserial-0001</code>.</li>
+          <li>Deixe o <code>Baud Rate</code> em <code>115200</code> (tem que bater com o ESP32).</li>
+        </ol>
+        <div class="note plain"><span class="lab">O que ele oferece pros outros scripts</span>
+          <p><strong>Pra ler os botões:</strong> as propriedades <code>ButtonLeft</code>, <code>ButtonRight</code>, <code>ButtonDown</code> (true enquanto pressionado) e <code>JumpPressed</code> (true por um frame no pulo). <strong>Pra mandar reação:</strong> os métodos <code>SendIdle()</code>, <code>SendTreasure()</code> e <code>SendDamage()</code>. Tudo pelo singleton <code>ESP32SerialReader.Instance</code>.</p>
+        </div>
+        <p>Referência das partes principais do script (o arquivo completo está no projeto):</p>
+        <div class="codebox"><div class="head"><span>referência · ESP32SerialReader.cs (resumo)</span><button class="copy">Copiar</button></div><pre><span class="kw">public class</span> <span class="fn">ESP32SerialReader</span> : MonoBehaviour
+{
+    <span class="kw">public static</span> ESP32SerialReader Instance { <span class="kw">get</span>; <span class="kw">private set</span>; }
+
+    <span class="cm">// Estado dos botões, lido pelo PlayerController</span>
+    <span class="kw">public bool</span> ButtonLeft  { <span class="kw">get</span>; <span class="kw">private set</span>; }
+    <span class="kw">public bool</span> ButtonRight { <span class="kw">get</span>; <span class="kw">private set</span>; }
+    <span class="kw">public bool</span> ButtonDown  { <span class="kw">get</span>; <span class="kw">private set</span>; }
+    <span class="kw">public bool</span> JumpPressed { <span class="kw">get</span>; <span class="kw">private set</span>; }
+
+    <span class="cm">// Reações enviadas pro OLED</span>
+    <span class="kw">public void</span> <span class="fn">SendIdle</span>()     => <span class="fn">WriteChar</span>(<span class="st">'I'</span>);  <span class="cm">// (O_O)</span>
+    <span class="kw">public void</span> <span class="fn">SendTreasure</span>() => <span class="fn">WriteChar</span>(<span class="st">'T'</span>);  <span class="cm">// (^u^) feliz</span>
+    <span class="kw">public void</span> <span class="fn">SendDamage</span>()   => <span class="fn">WriteChar</span>(<span class="st">'D'</span>);  <span class="cm">// (&gt;_&lt;)</span>
+
+    <span class="cm">// ...abre a porta, lê L1/L0/R1/R0/D1/D0/U numa thread, e escreve as letras...</span>
+}</pre></div>
+        <div class="note plain"><span class="lab">Sobre a porta e o baud</span>
+          <p>O baud rate precisa ser <strong>igual</strong> no Unity e no ESP32 (<code>115200</code>). Se a porta estiver errada, o jogo abre do mesmo jeito — só não conversa com a placa.</p>
+        </div>
+        <div class="note tip"><span class="lab">✅ Teste agora</span>
+          <p>Aperte Play e olhe a <strong>Console</strong>: deve aparecer <code>[ESP32] Conectado em ...</code>. Se aparecer um aviso de falha ao abrir a porta, é normal caso o ESP32 ainda não esteja ligado ou a porta esteja diferente — ajuste o <code>Port Name</code> no Inspector.</p>
+        </div>
+      </section>
+
+<section class="card" id="s24">
+        <span class="sec-tag"><span class="n">26</span><span class="role-badge" title="Papel: Hardware">🔌</span> ESP32</span>
+        <h3>Código do ESP32/OLED</h3>
+        <p>Este é o lado do <strong>ESP32</strong> — o código que a equipe de Hardware escreve e sobe pra placa (não vem no projeto Unity). Pra OLED SSD1306 costuma-se usar as bibliotecas <code>Adafruit SSD1306</code> e <code>Adafruit GFX</code> (instaláveis pelo Library Manager). A SSD1306 cuida da comunicação com o display; a GFX fornece texto, linhas e formas.</p>
+        <div class="note plain"><span class="lab">Arduino IDE ou VS Code — os dois servem</span>
+          <p>A ferramenta é só o jeito de <strong>passar o código pra placa</strong> (o ESP32). Pode usar a <strong>Arduino IDE</strong> (mais simples pra começar) ou o <strong>VS Code</strong> (com a extensão PlatformIO). Os dois fazem a mesma coisa; este guia mostra os passos pela Arduino IDE, mas no VS Code o caminho é equivalente. Use o que a equipe preferir.</p>
+        </div>
+        <p><strong>Ligações comuns (OLED I2C no ESP32):</strong></p>
+        <div class="ascii">OLED VCC → 3V3
+OLED GND → GND
+OLED SDA → GPIO21
+OLED SCL → GPIO22</div>
+        <div class="note plain"><span class="lab">Observação</span>
+          <p>No ESP32 genérico, GPIO21 (SDA) e GPIO22 (SCL) são o padrão nos exemplos I2C, mas isso pode variar conforme a placa.</p>
+        </div>
+        <div class="note warn"><span class="lab">O Unity manda uma LETRA, não uma palavra</span>
+          <p>O <code>ESP32SerialReader</code> envia um único caractere: <code>'I'</code> (neutra), <code>'T'</code> (feliz) ou <code>'D'</code> (dano). Então o firmware do ESP32 precisa <strong>ler um caractere</strong> e reagir a essas três letras — e mandar de volta os botões (<code>L1</code>/<code>L0</code>, <code>R1</code>/<code>R0</code>, <code>U</code>…).</p>
+        </div>
+        <p>Ler a letra que veio do Unity e escolher a carinha:</p>
+        <div class="codebox"><div class="head"><span>esp32.ino</span><button class="copy">Copiar</button></div><pre><span class="kw">if</span> (Serial.<span class="fn">available</span>()) {
+  <span class="kw">char</span> c = Serial.<span class="fn">read</span>();   <span class="cm">// lê um caractere</span>
+
+  <span class="kw">if</span> (c == <span class="st">'I'</span>) {
+    <span class="fn">showIdle</span>();       <span class="cm">// (O_O)</span>
+  } <span class="kw">else if</span> (c == <span class="st">'T'</span>) {
+    <span class="fn">showTreasure</span>();   <span class="cm">// (^u^) feliz</span>
+  } <span class="kw">else if</span> (c == <span class="st">'D'</span>) {
+    <span class="fn">showDamage</span>();     <span class="cm">// (&gt;_&lt;)</span>
+  }
+}</pre></div>
+      </section>
+
+<section class="card" id="s-desenho">
+        <span class="sec-tag"><span class="n">✦</span><span class="role-badge" title="Papel: Hardware">🔌</span> Hardware</span>
+        <h3>Como desenhar as carinhas no OLED</h3>
+        <p>Essa parte é da pessoa de <strong>Hardware</strong>. A telinha do OLED é <strong>monocromática</strong> (só acende ou apaga cada pixel, geralmente branco no fundo preto), então as carinhas são <strong>desenhadas com formas simples</strong> — círculos pros olhos, linhas pra boca — e não fotos coloridas.</p>
+
+        <h4>Passo 1 — Preparar a tela</h4>
+        <p>No topo do arquivo <code>.ino</code>, você inclui as bibliotecas e cria o objeto do display. A <code>Adafruit_GFX</code> dá as funções de desenho (círculo, linha, retângulo) e a <code>Adafruit_SSD1306</code> conversa com a tela.</p>
+        <div class="codebox"><div class="head"><span>topo do esp32.ino</span><button class="copy">Copiar</button></div><pre><span class="kw">#include</span> <span class="st">&lt;Wire.h&gt;</span>
+<span class="kw">#include</span> <span class="st">&lt;Adafruit_GFX.h&gt;</span>
+<span class="kw">#include</span> <span class="st">&lt;Adafruit_SSD1306.h&gt;</span>
+
+<span class="kw">#define</span> LARGURA 128
+<span class="kw">#define</span> ALTURA 64
+
+Adafruit_SSD1306 display(LARGURA, ALTURA, &amp;Wire, -1);
+
+<span class="kw">void</span> <span class="fn">setup</span>() {
+  Serial.<span class="fn">begin</span>(115200);
+  display.<span class="fn">begin</span>(SSD1306_SWITCHCAPVCC, 0x3C); <span class="cm">// 0x3C é o endereço comum do OLED</span>
+  <span class="fn">showIdle</span>(); <span class="cm">// começa com a carinha parada</span>
+}</pre></div>
+
+        <h4>Passo 2 — A regra das 3 etapas</h4>
+        <div class="note plain"><span class="lab">Sempre nessa ordem</span>
+          <p><strong>1.</strong> <code>display.clearDisplay()</code> — apaga o que estava antes. <strong>2.</strong> desenha a carinha nova (olhos, boca…). <strong>3.</strong> <code>display.display()</code> — só aí a tela realmente mostra. Se esquecer o passo 3, nada aparece!</p>
+        </div>
+
+        <h4>Passo 3 — Uma função por carinha</h4>
+        <p>Cada expressão é uma função. Repare que muda só a <strong>boca</strong> — os olhos são quase sempre iguais. Coordenadas: <code>(x, y)</code> começa no canto de cima à esquerda.</p>
+        <div class="codebox"><div class="head"><span>as carinhas</span><button class="copy">Copiar</button></div><pre><span class="cm">// olhos que quase todas as carinhas usam</span>
+<span class="kw">void</span> <span class="fn">desenhaOlhos</span>() {
+  display.<span class="fn">fillCircle</span>(45, 25, 6, SSD1306_WHITE); <span class="cm">// olho esquerdo</span>
+  display.<span class="fn">fillCircle</span>(83, 25, 6, SSD1306_WHITE); <span class="cm">// olho direito</span>
+}
+
+<span class="cm">// neutra: boca reta</span>
+<span class="kw">void</span> <span class="fn">showIdle</span>() {
+  display.<span class="fn">clearDisplay</span>();
+  <span class="fn">desenhaOlhos</span>();
+  display.<span class="fn">drawLine</span>(50, 45, 78, 45, SSD1306_WHITE);
+  display.<span class="fn">display</span>();
+}
+
+<span class="cm">// feliz / tesouro: boca sorrindo (linhas subindo nas pontas)</span>
+<span class="kw">void</span> <span class="fn">showTreasure</span>() {
+  display.<span class="fn">clearDisplay</span>();
+  <span class="fn">desenhaOlhos</span>();
+  display.<span class="fn">drawLine</span>(50, 42, 64, 50, SSD1306_WHITE);
+  display.<span class="fn">drawLine</span>(64, 50, 78, 42, SSD1306_WHITE);
+  display.<span class="fn">display</span>();
+}
+
+<span class="cm">// dano: boca virada pra baixo</span>
+<span class="kw">void</span> <span class="fn">showDamage</span>() {
+  display.<span class="fn">clearDisplay</span>();
+  <span class="fn">desenhaOlhos</span>();
+  display.<span class="fn">drawLine</span>(50, 50, 64, 42, SSD1306_WHITE);
+  display.<span class="fn">drawLine</span>(64, 42, 78, 50, SSD1306_WHITE);
+  display.<span class="fn">display</span>();
+}</pre></div>
+        <p>Essas três (<code>showIdle</code>, <code>showTreasure</code>, <code>showDamage</code>) cobrem o protocolo do projeto. Se quiser <strong>expressões extras</strong> (surpresa, comemoração…), é só criar mais funções no mesmo padrão — ex: uma boca em "O" com <code>display.drawCircle(64, 46, 6, SSD1306_WHITE)</code> — e mandar uma letra nova do Unity pra elas.</p>
+
+        <h4>Passo 4 — Ligar as letras às funções</h4>
+        <p>No <code>loop()</code>, você lê a <strong>letra</strong> que veio do Unity e chama a carinha certa — é a versão completa do trechinho da seção 24:</p>
+        <div class="codebox"><div class="head"><span>loop() do esp32.ino</span><button class="copy">Copiar</button></div><pre><span class="kw">void</span> <span class="fn">loop</span>() {
+  <span class="kw">if</span> (Serial.<span class="fn">available</span>()) {
+    <span class="kw">char</span> c = Serial.<span class="fn">read</span>();
+
+    <span class="kw">if</span> (c == <span class="st">'I'</span>)      <span class="fn">showIdle</span>();
+    <span class="kw">else if</span> (c == <span class="st">'T'</span>) <span class="fn">showTreasure</span>();
+    <span class="kw">else if</span> (c == <span class="st">'D'</span>) <span class="fn">showDamage</span>();
+  }
+
+  <span class="cm">// aqui também vai a leitura dos botões pra mandar L1/L0/R1/R0/U pro Unity</span>
+}</pre></div>
+
+        <div class="note tip"><span class="lab">Quer usar imagens no lugar de formas?</span>
+          <p>Dá pra desenhar uma carinha feita de imagem com <code>display.drawBitmap(...)</code>. Aí você converte um PNG preto e branco pequeno num vetor de bytes usando um site como o <strong>image2cpp</strong>, cola o vetor no código e chama no lugar dos olhos/boca. É mais bonito, mas dá mais trabalho — pro evento, começar com as formas simples é o caminho mais tranquilo.</p>
+        </div>
+        <div class="note warn"><span class="lab">Se a tela ficar preta</span>
+          <p>Confira: esqueceu o <code>display.display()</code>? O endereço <code>0x3C</code> está certo (algumas telas usam <code>0x3D</code>)? Os fios <code>SDA</code>/<code>SCL</code> estão nos GPIO certos (seção 24)?</p>
+        </div>
+      </section>
+
+<section class="card" id="s25">
+        <span class="sec-tag"><span class="n">27</span><span class="role-badge" title="Papel: Hardware">🔌</span> ESP32</span>
+        <h3>Testar o ESP32 sozinho</h3>
+        <p>Antes de juntar com o Unity:</p>
+        <ol>
+          <li>Conecte o ESP32 no USB.</li>
+          <li>Abra o Arduino IDE.</li>
+          <li>Selecione a placa e a porta.</li>
+          <li>Faça upload do código.</li>
+          <li>Abra o Serial Monitor em <code>115200</code>.</li>
+          <li>Digite <code>T</code> e envie — o OLED deve mostrar a carinha feliz.</li>
+          <li>Teste também <code>I</code> (neutra) e <code>D</code> (dano).</li>
+        </ol>
+        <div class="note tip"><span class="lab">Sem a placa em mãos? Teste no simulador</span>
+          <p>Dá pra ver os rostos funcionando <strong>direto no navegador</strong>, antes mesmo de ter o ESP32 físico, usando o simulador Wokwi que a organização preparou: <a href="https://wokwi.com/projects/467903477477143553" target="_blank" rel="noopener" style="color:var(--lilac-500);font-weight:800">abrir simulação no Wokwi</a>. É ótimo pra testar as carinhas e ganhar confiança antes do dia.</p>
+        </div>
+        <div class="note tip"><span class="lab">Se funcionar no Serial Monitor</span>
+          <p>O hardware está ok! Pode seguir pra parte do Unity.</p>
+        </div>
+      </section>
+
+<section class="card" id="s26">
+        <span class="sec-tag"><span class="n">28</span><span class="role-badge" title="Papel: Hardware Gameplay">🔌⚙️</span> Integração</span>
+        <h3>Testar Unity com ESP32</h3>
+        <div class="note warn"><span class="lab">Antes de tudo</span>
+          <p>Feche o Serial Monitor do Arduino — Unity e Arduino IDE <strong>não conseguem usar a mesma porta ao mesmo tempo</strong>.</p>
+        </div>
+        <p>No Unity:</p>
+        <ol>
+          <li>Clique no objeto <code>ESP32SerialReader</code>.</li>
+          <li>No Inspector, coloque a porta certa (Windows: <code>COM3</code>; Mac: <code>/dev/tty.usbserial-0001</code>) e <code>Baud Rate: 115200</code>.</li>
+          <li>Clique Play.</li>
+          <li>Veja a Console (deve aparecer <code>[ESP32] Conectado...</code>).</li>
+        </ol>
+        <div class="tbl"><table>
+          <tr><th>Erro</th><th>Provável causa</th></tr>
+          <tr><td><code>Access denied</code></td><td>O Serial Monitor ainda está aberto.</td></tr>
+          <tr><td><code>Port not found</code></td><td>A porta COM está errada.</td></tr>
+        </table></div>
+      </section>
+
+<section class="card" id="s27">
+        <span class="sec-tag"><span class="n">29</span><span class="role-badge" title="Papel: Hardware Gameplay">🔌⚙️</span> Testes</span>
+        <h3>Testar os eventos do jogo</h3>
+        <p>Depois que tudo estiver montado, confira se cada ação do jogo dispara a reação certa no OLED.</p>
+        <div class="tbl"><table>
+          <tr><th>Ação</th><th>Resultado esperado</th></tr>
+          <tr><td>Encostar num item</td><td>Item some e o OLED mostra a carinha feliz (<code>T</code>)</td></tr>
+          <tr><td>Encostar num obstáculo</td><td>OLED mostra a carinha de dano (<code>D</code>)</td></tr>
+          <tr><td>Coletar o último item</td><td>Painel de fim aparece, jogo pausa, OLED feliz (<code>T</code>)</td></tr>
+          <tr><td>Chegar no <code>LevelEnd</code></td><td>Painel de fim aparece, jogo pausa, OLED feliz (<code>T</code>)</td></tr>
+          <tr><td>Apertar os botões do ESP32</td><td>O personagem anda/pula na tela</td></tr>
+        </table></div>
+        <div class="note plain"><span class="lab">Voltar pra neutra</span>
+          <p>A carinha fica na última reação enviada. Se quiser que ela volte pra neutra depois de um tempo, dá pra chamar <code>SendIdle()</code> — por exemplo, alguns segundos após a reação, como personalização.</p>
+        </div>
+      </section>
+
+      <div class="grouphead"><div class="num">10</div><h2>Personalizar e usar IA</h2></div>
+
+<section class="card" id="s30">
+        <span class="sec-tag"><span class="n">30</span> Personalizar</span>
+        <h3>Como personalizar o jogo</h3>
+        <p>A descrição pede escolher pelo menos 4 itens. Comece pelos que mexem mais no visual do que na lógica:</p>
+        <ul class="check" data-key="s30a">
+          <li><label><input type="checkbox"><span>Novo personagem</span></label></li>
+          <li><label><input type="checkbox"><span>Novo cenário</span></label></li>
+          <li><label><input type="checkbox"><span>Novos obstáculos</span></label></li>
+          <li><label><input type="checkbox"><span>Novos itens</span></label></li>
+        </ul>
+        <p>Depois, se sobrar tempo:</p>
+        <ul class="check" data-key="s30b">
+          <li><label><input type="checkbox"><span>Nova HUD</span></label></li>
+          <li><label><input type="checkbox"><span>Nova expressão OLED</span></label></li>
+          <li><label><input type="checkbox"><span>Nova mecânica simples</span></label></li>
+        </ul>
+        <div class="note warn"><span class="lab">Evite começar por</span>
+          <p>Chefe, fase bônus ou mecânica muito complexa — pode virar uma cebola do desespero. 🧅</p>
+        </div>
+      </section>
+
+<section class="card" id="s31">
+        <span class="sec-tag"><span class="n">31</span><span class="role-badge" title="Papel: Artista Cenário">🎨🏞️</span> Prompts</span>
+        <h3>Prompts pra gerar assets</h3>
+        <div class="note plain"><span class="lab">ChatGPT ou Kiro — os dois valem</span>
+          <p>Estes prompts são texto-pra-imagem: cole no <strong>ChatGPT</strong> ou no <strong>Kiro</strong>, o que a equipe preferir. Use o mesmo prompt, sem precisar adaptar nada.</p>
+        </div>
+        <h4>Personagem</h4>
+        <div class="codebox"><div class="head"><span>prompt · personagem</span><button class="copy">Copiar</button></div><pre>Cute friendly AI ghost mascot for a 2D platform game.
+Front view only.
+Flat vector illustration.
+White body with subtle blue accents.
+Rounded shape.
+Transparent background.
+Game-ready.
+No text.
+No watermark.</pre></div>
+        <h4>Expressões</h4>
+        <div class="codebox"><div class="head"><span>prompt · expressões</span><button class="copy">Copiar</button></div><pre>Character expression sheet.
+Same cute ghost.
+Front view.
+10 expressions:
+idle, happy, sad, surprised, talking, thinking, excited, confused, celebrating, sleeping
+Transparent background.
+Flat vector.
+Sprite sheet.
+No text.</pre></div>
+        <h4>Chão / tiles</h4>
+        <div class="codebox"><div class="head"><span>prompt · chão</span><button class="copy">Copiar</button></div><pre>Create a modular 2D sci-fi laboratory floor tileset.
+Exactly 20 square tiles.
+Each tile exactly 256x256 pixels.
+Perfect aligned grid.
+No spacing.
+No transparent padding.
+Every tile must seamlessly connect.
+Flat vector.
+Transparent background.
+No text.</pre></div>
+        <h4>Cenário</h4>
+        <div class="codebox"><div class="head"><span>prompt · cenário</span><button class="copy">Copiar</button></div><pre>Modular sci-fi laboratory assets.
+Transparent background.
+Walls.
+Platforms.
+Doors.
+Pipes.
+Computers.
+Terminals.
+Crates.
+Game-ready.
+Flat vector.
+No text.</pre></div>
+        <h4>Obstáculos</h4>
+        <div class="codebox"><div class="head"><span>prompt · obstáculos</span><button class="copy">Copiar</button></div><pre>2D game asset sheet.
+3 obstacles: Energy barrier, Laser emitter, Broken robot
+Transparent background.
+Flat vector.
+Game-ready.</pre></div>
+        <h4>Itens</h4>
+        <div class="codebox"><div class="head"><span>prompt · itens</span><button class="copy">Copiar</button></div><pre>2D collectible asset sheet.
+Microchip, Energy crystal, Byte cube
+Transparent background.
+Flat vector.
+Game-ready.</pre></div>
+        <h4>HUD</h4>
+        <div class="codebox"><div class="head"><span>prompt · hud</span><button class="copy">Copiar</button></div><pre>Futuristic game UI kit.
+Score panel.
+Timer.
+Health bar.
+Victory panel.
+Game over panel.
+Transparent background.
+Flat vector.
+Game-ready.</pre></div>
+        <h4>Efeitos</h4>
+        <div class="codebox"><div class="head"><span>prompt · efeitos</span><button class="copy">Copiar</button></div><pre>2D VFX asset sheet.
+Sparkles.
+Explosion.
+Energy burst.
+Cloud puff.
+Portal.
+Transparent background.
+Flat vector.
+Game-ready.</pre></div>
+        <div class="note tip"><span class="lab">Tamanho dos assets</span>
+          <p>Pra evitar dor de cabeça no Unity, padronize os sprites de cada tipo. Tiles de chão/plataforma: <strong>256×256 px</strong> (ou 128×128, mas escolham um único padrão). Personagem: todas as poses no mesmo tamanho (ex: 512×512 por frame). Obstáculos e itens: mesmo tamanho entre si (ex: 256×256). HUD: pode variar, é interface. A recomendação é <strong>256×256 px pra quase tudo</strong> — o importante é que assets da mesma categoria mantenham exatamente a mesma escala.</p>
+        </div>
+      </section>
+
+<section class="card" id="s-kiro">
+        <span class="sec-tag"><span class="n">✦</span> Ferramenta do evento</span>
+        <h3>O que é o Kiro e como ele entra no projeto</h3>
+        <p>Como este é um evento da <strong>AWS</strong>, a ferramenta de código será o <strong>Kiro</strong> — um editor com <strong>inteligência artificial</strong> que a AWS criou. Ele é o <em>assistente de código</em> de vocês: em vez de escrever tudo em C# na mão, você <strong>conversa com ele em inglês</strong> descrevendo o que quer, e ele lê o projeto, entende o que já existe e escreve ou edita os arquivos por você — explicando o que mudou.</p>
+        <div class="note plain"><span class="lab">Em palavras simples</span>
+          <p>Pense no Kiro como uma pessoa da equipe que <strong>sabe programar muito bem</strong> e senta ao seu lado. Você pede (“crie um item que soma pontos”), ela faz e te explica. Você continua no comando — quem decide o que pedir, testa e aprova é você.</p>
+        </div>
+
+        <h4>Como ele funciona no fluxo</h4>
+        <p>O Kiro mexe direto nos arquivos da pasta do projeto Unity. O ciclo é sempre esse:</p>
+        <div class="ascii">Você pede em inglês  →  Kiro lê o projeto e edita os scripts (.cs)
+        →  Você volta pro Unity  →  Unity recompila sozinho
+        →  Você aperta Play e testa  →  deu certo? pede a próxima</div>
+
+        <h4>Quem usa o Kiro (e quem não)</h4>
+        <p>O Kiro é a ferramenta principal pra <strong>código</strong>: as pessoas de <strong>Gameplay</strong> (scripts, regras, pontuação) e também dá pra usar no <strong>firmware do ESP32</strong>. Pra <strong>arte</strong> (personagem, expressões, cenário), a equipe pode escolher entre <strong>ChatGPT</strong> ou <strong>Kiro</strong> — os prompts da seção 31 são só texto, então funcionam nos dois; use o que a equipe preferir ou já tiver configurado.</p>
+
+        <div class="note plain"><span class="lab">Uma dica prática</span>
+          <p>Os prompts da seção 31 são só texto, então colam do mesmo jeito no ChatGPT ou no Kiro. Se for gerar pelo Kiro, só confirme que a geração de imagem está disponível na configuração que vocês vão usar no evento.</p>
+        </div>
+        <div class="note warn"><span class="lab">A regra que evita dor de cabeça</span>
+          <p>Peça <strong>uma coisa de cada vez</strong>, teste, e só então peça a próxima. Se você despejar cinco pedidos num prompt só e algo quebrar, fica quase impossível achar onde. Prompt curto e específico &gt; prompt gigante.</p>
+        </div>
+        <div class="note tip"><span class="lab">Sempre comece assim</span>
+          <p>Antes de pedir qualquer mudança, deixe o Kiro <strong>conhecer o projeto</strong> sem mexer em nada (é o primeiro prompt da próxima seção). Assim ele responde com base no que realmente existe, não em suposições.</p>
+        </div>
+      </section>
+
+<section class="card" id="s32">
+        <span class="sec-tag"><span class="n">32</span><span class="role-badge" title="Papel: Gameplay Hardware">⚙️🔌</span> Kiro</span>
+        <h3>Como usar o Kiro sem quebrar tudo</h3>
+        <div class="note tip"><span class="lab">Regra de ouro</span>
+          <p>Uma alteração pequena por vez → testa → só depois pede outra.</p>
+        </div>
+        <h4>Primeiro prompt (sempre comece por aqui)</h4>
+        <div class="codebox"><div class="head"><span>kiro · começar</span><button class="copy">Copiar</button></div><pre>Read the current Unity project.
+Identify the main gameplay scripts.
+Explain what each script does.
+Do not modify any file yet.</pre></div>
+        <div class="note plain"><span class="lab">Muita coisa já está pronta</span>
+          <p>O projeto já traz <code>PlayerController</code>, <code>ESP32SerialReader</code>, <code>Collectible</code>, <code>GameManager</code>, <code>LevelEnd</code> e <code>MovingPlatform</code> funcionando juntos. Então boa parte dos prompts abaixo é pra <strong>personalizar ou ir além</strong>, não pra recriar o que existe.</p>
+        </div>
+        <h4>Nova mecânica</h4>
+        <div class="codebox"><div class="head"><span>kiro · mecânica</span><button class="copy">Copiar</button></div><pre>Read the current Unity project.
+Understand the gameplay.
+Suggest ONE small mechanic that can be implemented in less than 30 minutes.
+Implement it without changing the project architecture.
+Explain every modified file.</pre></div>
+        <h4>Novo obstáculo</h4>
+        <div class="codebox"><div class="head"><span>kiro · obstáculo</span><button class="copy">Copiar</button></div><pre>Read the existing Collectible script for reference.
+Create a new Obstacle script that, on trigger with the Player (tag "Player"),
+calls ESP32SerialReader.Instance?.SendDamage().
+Keep it simple and consistent with the existing code.
+Explain all changes.</pre></div>
+        <h4>Nova reação Serial (nova carinha)</h4>
+        <div class="codebox"><div class="head"><span>kiro · serial</span><button class="copy">Copiar</button></div><pre>Read the current ESP32SerialReader script.
+Add a new public method that writes a new single-char reaction to the OLED
+(for example SendCelebrating() that writes 'C'), keeping the existing I/T/D methods intact.
+Explain every modified file.</pre></div>
+        <h4>Hardware — as 3 carinhas no firmware</h4>
+        <div class="codebox"><div class="head"><span>kiro · carinhas</span><button class="copy">Copiar</button></div><pre>Write ESP32 (Arduino) firmware for an SSD1306 OLED.
+Read a single char from Serial and draw a face for 'I' (neutral), 'T' (happy), 'D' (hurt).
+Also read the physical buttons and send "L1"/"L0", "R1"/"R0" and "U" back to Unity.
+Use Adafruit_GFX shapes. Explain the code.</pre></div>
+        <h4>Desafio extra — Dash com toque duplo</h4>
+        <div class="codebox"><div class="head"><span>kiro · dash</span><button class="copy">Copiar</button></div><pre>Read the PlayerController script.
+Add a 'Dash' mechanic: when the player double-taps left or right
+(using ESP32SerialReader.Instance.ButtonLeft / ButtonRight), dash quickly in that direction.
+Explain the changes step by step.</pre></div>
+        <h4>Desafio extra — carinha comemorando animada</h4>
+        <div class="codebox"><div class="head"><span>kiro · celebrating</span><button class="copy">Copiar</button></div><pre>In the ESP32 firmware, add a new reaction for the char 'C'.
+Make the OLED show a simple animation alternating between '(^o^)' and '(^o^)/'
+using a non-blocking timer (millis()).
+Explain the changes.</pre></div>
+      </section>
+
+      <div class="grouphead"><div class="num">11</div><h2>Checklists e resumo</h2></div>
+
+<section class="card" id="s33">
+        <span class="sec-tag"><span class="n">33</span> Entrega</span>
+        <h3>Checklist final de entrega</h3>
+        <p>Antes de entregar, confira se cada um destes pontos está funcionando.</p>
+        <ul class="check" data-key="s33">
+          <li><label><input type="checkbox"><span>O projeto abre no Unity</span></label></li>
+          <li><label><input type="checkbox"><span>A cena principal abre</span></label></li>
+          <li><label><input type="checkbox"><span>O Play funciona</span></label></li>
+          <li><label><input type="checkbox"><span>O personagem aparece</span></label></li>
+          <li><label><input type="checkbox"><span>O personagem anda</span></label></li>
+          <li><label><input type="checkbox"><span>O personagem pula, se tiver pulo</span></label></li>
+          <li><label><input type="checkbox"><span>O chão está fixo</span></label></li>
+          <li><label><input type="checkbox"><span>O personagem fica em cima do chão</span></label></li>
+          <li><label><input type="checkbox"><span>Existem 3 obstáculos</span></label></li>
+          <li><label><input type="checkbox"><span>Existem 3 itens coletáveis</span></label></li>
+          <li><label><input type="checkbox"><span>Ao pegar todos os itens, aparece o painel de fim</span></label></li>
+          <li><label><input type="checkbox"><span>O ESP32 está conectado</span></label></li>
+          <li><label><input type="checkbox"><span>O OLED liga</span></label></li>
+          <li><label><input type="checkbox"><span>Unity envia as letras (I/T/D)</span></label></li>
+          <li><label><input type="checkbox"><span>OLED mostra a carinha feliz (T) ao pegar item</span></label></li>
+          <li><label><input type="checkbox"><span>OLED mostra a carinha de dano (D) ao bater no obstáculo</span></label></li>
+          <li><label><input type="checkbox"><span>OLED mostra a carinha neutra (I) no jogo normal</span></label></li>
+          <li><label><input type="checkbox"><span>Os botões do ESP32 movem o personagem</span></label></li>
+          <li><label><input type="checkbox"><span>Tem pelo menos 4 personalizações</span></label></li>
+        </ul>
+      </section>
+
+<section class="card" id="s34">
+        <span class="sec-tag"><span class="n">34</span> Socorro</span>
+        <h3>Checklist de problemas comuns</h3>
+        <p class="chk-sub">O chão não segura o personagem</p>
+        <ul class="check" data-key="s34a">
+          <li><label><input type="checkbox"><span>Ground tem BoxCollider2D</span></label></li>
+          <li><label><input type="checkbox"><span>Player tem Rigidbody2D</span></label></li>
+          <li><label><input type="checkbox"><span>Player tem Collider2D</span></label></li>
+          <li><label><input type="checkbox"><span>Player está acima do chão</span></label></li>
+          <li><label><input type="checkbox"><span>O chão <strong>não</strong> está marcado como Is Trigger</span></label></li>
+        </ul>
+        <p class="chk-sub">O personagem não se mexe</p>
+        <ul class="check" data-key="s34b">
+          <li><label><input type="checkbox"><span>Player tem o PlayerController</span></label></li>
+          <li><label><input type="checkbox"><span>Script está sem erro na Console</span></label></li>
+          <li><label><input type="checkbox"><span>Player tem Rigidbody2D e Animator</span></label></li>
+          <li><label><input type="checkbox"><span>Pra testar sem a placa: Force Keyboard Fallback está marcado</span></label></li>
+          <li><label><input type="checkbox"><span>PlayerInput configurado (Actions + Send Messages)</span></label></li>
+          <li><label><input type="checkbox"><span>Você clicou na aba Game antes de apertar as teclas</span></label></li>
+        </ul>
+        <p class="chk-sub">O personagem não pula</p>
+        <ul class="check" data-key="s34b2">
+          <li><label><input type="checkbox"><span>A Layer Ground está no campo Ground Layer do PlayerController</span></label></li>
+          <li><label><input type="checkbox"><span>O GroundCheck está posicionado nos pés do personagem</span></label></li>
+          <li><label><input type="checkbox"><span>O chão está na Layer Ground</span></label></li>
+        </ul>
+        <p class="chk-sub">O item não coleta</p>
+        <ul class="check" data-key="s34c">
+          <li><label><input type="checkbox"><span>Item tem Collider2D</span></label></li>
+          <li><label><input type="checkbox"><span>Is Trigger está marcado</span></label></li>
+          <li><label><input type="checkbox"><span>Player tem tag Player</span></label></li>
+          <li><label><input type="checkbox"><span>Player tem Rigidbody2D</span></label></li>
+          <li><label><input type="checkbox"><span>O script Collectible está anexado ao item</span></label></li>
+        </ul>
+        <p class="chk-sub">O obstáculo não reage</p>
+        <ul class="check" data-key="s34d">
+          <li><label><input type="checkbox"><span>Obstáculo tem Collider2D</span></label></li>
+          <li><label><input type="checkbox"><span>Is Trigger marcado, se o script usa OnTriggerEnter2D</span></label></li>
+          <li><label><input type="checkbox"><span>Player tem tag Player</span></label></li>
+          <li><label><input type="checkbox"><span>Script de obstáculo está anexado</span></label></li>
+        </ul>
+        <p class="chk-sub">OLED não responde</p>
+        <ul class="check" data-key="s34e">
+          <li><label><input type="checkbox"><span>ESP32 está conectado</span></label></li>
+          <li><label><input type="checkbox"><span>Código foi enviado pra placa</span></label></li>
+          <li><label><input type="checkbox"><span>OLED está ligado certo (SDA/SCL, endereço 0x3C)</span></label></li>
+          <li><label><input type="checkbox"><span>Serial Monitor testou as letras (I/T/D)</span></label></li>
+          <li><label><input type="checkbox"><span>Serial Monitor está fechado antes de abrir o Unity</span></label></li>
+          <li><label><input type="checkbox"><span>A porta está correta no ESP32SerialReader (COM ou /dev/tty…)</span></label></li>
+          <li><label><input type="checkbox"><span>Baud rate é 115200 nos dois lados</span></label></li>
+        </ul>
+      </section>
+
+      <section class="card" id="s35">
+        <span class="sec-tag"><span class="n">35</span> Roteiro</span>
+        <h3>Roteiro do dia do evento, literalmente</h3>
+        <p>A ordem abaixo segue exatamente a ordem deste guia — se travar em algum passo, é só voltar pra seção correspondente.</p>
+        <ol>
+          <li>Decidir os papéis da equipe (quem faz o quê).</li>
+          <li>Abrir GitHub e clonar o repositório (Git Bash ou Kiro).</li>
+          <li>Confirmar que a pasta tem <code>Assets</code>, <code>Packages</code> e <code>ProjectSettings</code> — ela já é o projeto Unity.</li>
+          <li>Abrir essa pasta no Unity Hub.</li>
+          <li>Abrir a cena principal e clicar Play, só pra testar.</li>
+          <li>Separar os sprites do personagem e colocar na cena (Fase Personagem).</li>
+          <li>Encontrar e configurar o chão (Fase Cenário).</li>
+          <li>Ver a visão geral da Fase Hardware.</li>
+          <li>Configurar o PlayerController (ou criar um do zero) e testar o movimento.</li>
+          <li>Criar os itens coletáveis e testar a pontuação.</li>
+          <li>Criar os obstáculos e testar a colisão.</li>
+          <li>Criar a HUD e o ponto de vitória.</li>
+          <li>Montar a fase mínima com os itens e obstáculos em ordem.</li>
+          <li>Ligar o OLED no ESP32 e testar sozinho pelo Serial Monitor.</li>
+          <li>Subir o firmware com as expressões.</li>
+          <li>Fechar o Serial Monitor e testar o Unity enviando comandos pro ESP32.</li>
+          <li>Testar todos os eventos do jogo reagindo no OLED.</li>
+          <li>Personalizar personagem, cenário, obstáculos e itens.</li>
+          <li>Testar tudo de novo, do zero.</li>
+          <li>Atualizar a documentação de comandos.</li>
+          <li>Fazer a entrega final. 🎉</li>
+        </ol>
+      </section>
+
+<section class="card" id="s36">
+        <span class="sec-tag"><span class="n">36</span> Resumo</span>
+        <h3>Glossário e resumo pra guardar</h3>
+        <p>Se você travar em algum termo, volta aqui.</p>
+        <div class="tbl"><table>
+          <tr><th>Termo</th><th>Significado</th></tr>
+          <tr><td>GitHub</td><td>Onde o projeto está guardado</td></tr>
+          <tr><td><code>git clone</code></td><td>Baixar o projeto pra sua máquina</td></tr>
+          <tr><td>Unity Hub</td><td>Abrir o projeto Unity</td></tr>
+          <tr><td>Scene</td><td>Fase / tela do jogo</td></tr>
+          <tr><td>Hierarchy</td><td>Lista de objetos da cena</td></tr>
+          <tr><td>Project</td><td>Painel com os arquivos do projeto</td></tr>
+          <tr><td>Inspector</td><td>Painel de configurações do objeto selecionado</td></tr>
+          <tr><td><strong>GameObject</strong></td><td>Qualquer "coisa" na cena — personagem, chão, uma caixa vazia</td></tr>
+          <tr><td><strong>Component</strong></td><td>Uma "peça" anexada a um GameObject (ex: Rigidbody2D, Collider2D)</td></tr>
+          <tr><td>Prefab</td><td>Um GameObject "salvo como molde", pra reusar várias vezes</td></tr>
+          <tr><td>Ground</td><td>Chão</td></tr>
+          <tr><td>Player</td><td>Personagem</td></tr>
+          <tr><td>Rigidbody2D</td><td>Component que dá física ao objeto (peso, gravidade)</td></tr>
+          <tr><td>Collider2D</td><td>Component com a área de colisão (BoxCollider2D é um tipo, com formato de caixa)</td></tr>
+          <tr><td>Trigger</td><td>Colisão que detecta, mas não bloqueia</td></tr>
+          <tr><td>Sprite Renderer</td><td>Component que mostra a imagem do objeto</td></tr>
+          <tr><td>Tag</td><td>Etiqueta de texto num objeto (ex: "Player"), usada em <code>CompareTag</code></td></tr>
+          <tr><td>Layer</td><td>Categoria do objeto pra física/colisão (ex: "Ground"), diferente de Tag</td></tr>
+          <tr><td>Tilemap</td><td>Grade pra "pintar" blocos repetidos e montar o cenário</td></tr>
+          <tr><td>Sorting Layer</td><td>Define o que aparece na frente quando imagens se sobrepõem</td></tr>
+          <tr><td>GameManager</td><td>Conta os coletáveis e mostra o fim de jogo</td></tr>
+          <tr><td>ESP32SerialReader</td><td>Conversa com o ESP32 (botões + reações do OLED)</td></tr>
+          <tr><td>ESP32</td><td>Placa física</td></tr>
+          <tr><td>OLED</td><td>Display que mostra expressões</td></tr>
+        </table></div>
+        <div class="note plain"><span class="lab">A lógica mais importante do projeto</span>
+          <div class="ascii" style="background:#fff;border-color:var(--lilac-200);margin-top:10px">Player pega item
+      ↓
+Collectible avisa o GameManager
+      ↓
+GameManager conta (pegou todos? → painel de fim)
+      ↓
+ESP32SerialReader.SendTreasure()
+      ↓
+ESP32 recebe 'T'
+      ↓
+OLED mostra a carinha feliz</div>
+          <p style="margin-top:12px">Se você entender esse fluxo, consegue se localizar no projeto inteiro. Você consegue. 💜</p>
+        </div>
+      </section>
+
+      <div style="text-align:center;margin-top:20px"><a class="backtop" href="#">↑ Voltar ao topo</a></div>
+
+    </main>
+  </div>
+</div>
+
+<footer>
+  Guia Connect Byte × AWS · feito com carinho pras meninas <span class="heart">♥</span><br>
+  Uma alteração de cada vez, testa, e segue. Boa sorte!<br>
+  <a href="https://docs.google.com/document/d/1Af5lQVQPltBDhiJPMnpuWihH-ZxRkwWG2OIuY1w2R1c/edit?tab=t.0" target="_blank" rel="noopener" style="color:var(--lilac-500);font-weight:800">📄 Documento oficial</a>
+</footer>
+
+<script>
+  // Copiar código
+  document.querySelectorAll('.codebox .copy').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var pre = btn.closest('.codebox').querySelector('pre');
+      var text = pre.innerText;
+      navigator.clipboard.writeText(text).then(function(){
+        var old = btn.textContent;
+        btn.textContent = 'Copiado!';
+        setTimeout(function(){ btn.textContent = old; }, 1400);
+      }).catch(function(){
+        btn.textContent = 'Erro';
+        setTimeout(function(){ btn.textContent = 'Copiar'; }, 1400);
+      });
+    });
+  });
+
+  // Realce do item ativo no índice conforme rola a página
+  var links = Array.prototype.slice.call(document.querySelectorAll('nav.toc a'));
+  var map = {};
+  links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        links.forEach(function(a){ a.style.background=''; a.style.color=''; });
+        var a = map[e.target.id];
+        if(a){ a.style.background='var(--lilac-50)'; a.style.color='var(--plum)'; }
+      }
+    });
+  }, {rootMargin:'-20% 0px -70% 0px'});
+  document.querySelectorAll('section.card').forEach(function(s){ obs.observe(s); });
+</script>
