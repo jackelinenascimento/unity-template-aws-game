@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using System;
+using System.Collections.Generic;
 
 /// <summary>
 /// Gerencia o estado do jogo e exibe o painel de fim de jogo.
@@ -51,6 +52,8 @@ public class GameManager : MonoBehaviour
     private bool _configuredAtRuntime;
     private bool _hasGameEnded;
     private float _remainingTimeSeconds;
+    private readonly Dictionary<CollectibleType, int> _requiredByType = new Dictionary<CollectibleType, int>();
+    private readonly Dictionary<CollectibleType, int> _collectedByType = new Dictionary<CollectibleType, int>();
 
     public event Action<int, int> RequiredCollectiblesChanged;
     public event Action<bool> GameEnded;
@@ -64,6 +67,12 @@ public class GameManager : MonoBehaviour
     public float TotalTimeSeconds => levelDurationSeconds;
     public float RemainingTimeSeconds => _remainingTimeSeconds;
     public bool PortalUnlocked => AllRequiredCollected;
+
+    public int GetRequiredCount(CollectibleType type)
+        => _requiredByType.TryGetValue(type, out int count) ? count : 0;
+
+    public int GetCollectedCount(CollectibleType type)
+        => _collectedByType.TryGetValue(type, out int count) ? count : 0;
 
     // ----------------------------------------------------------------
     // Unity lifecycle
@@ -115,6 +124,7 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+        _collectedByType[type] = Mathf.Min(GetCollectedCount(type) + 1, GetRequiredCount(type));
         _collectedCount = Mathf.Min(_collectedCount + 1, _totalCollectibles);
         RefreshHud();
         RequiredCollectiblesChanged?.Invoke(_collectedCount, _totalCollectibles);
@@ -240,10 +250,18 @@ public class GameManager : MonoBehaviour
     {
         Collectible[] collectibles = FindObjectsByType<Collectible>(FindObjectsSortMode.None);
         _totalCollectibles = 0;
+        _requiredByType.Clear();
+        _collectedByType.Clear();
         foreach (Collectible collectible in collectibles)
         {
             if (collectible != null && collectible.CountsForVictory)
+            {
                 _totalCollectibles++;
+                CollectibleType type = collectible.Type;
+                _requiredByType[type] = GetRequiredCount(type) + 1;
+                if (!_collectedByType.ContainsKey(type))
+                    _collectedByType[type] = 0;
+            }
         }
 
         if (gameOverPanel == null)

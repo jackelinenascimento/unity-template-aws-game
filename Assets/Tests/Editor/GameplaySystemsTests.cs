@@ -58,11 +58,16 @@ public class GameplaySystemsTests
         manager.OnItemCollected(CollectibleType.PenDrive);
         Assert.AreEqual(1, manager.CollectedRequiredCount);
         Assert.IsFalse(manager.AllRequiredCollected);
+        Assert.AreEqual(1, manager.GetRequiredCount(CollectibleType.PenDrive));
+        Assert.AreEqual(1, manager.GetRequiredCount(CollectibleType.DataCore));
+        Assert.AreEqual(1, manager.GetCollectedCount(CollectibleType.PenDrive));
+        Assert.AreEqual(0, manager.GetCollectedCount(CollectibleType.DataCore));
 
         manager.OnItemCollected(CollectibleType.DataCore);
         Assert.AreEqual(2, manager.CollectedRequiredCount);
         Assert.IsTrue(manager.AllRequiredCollected);
         Assert.IsFalse(manager.HasGameEnded);
+        Assert.AreEqual(1, manager.GetCollectedCount(CollectibleType.DataCore));
     }
 
     [Test]

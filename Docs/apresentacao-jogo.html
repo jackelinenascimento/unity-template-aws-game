@@ -209,15 +209,27 @@
     .scene-copy { padding: 18px; }
 
     /* ── Mecânicas ───────────────────────────────────────────── */
-    .feature-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; padding: 24px 30px 32px; }
+    .feature-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; padding: 24px 30px 32px; }
     .feature {
       border: 1px solid var(--line); border-radius: var(--rs);
       overflow: hidden; background: rgba(255,255,255,.025);
       transition: transform .2s, border-color .2s;
     }
     .feature:hover { transform: translateY(-4px); border-color: rgba(91,237,255,.28); }
-    .feature img { display: block; width: 100%; height: 160px; object-fit: cover; border-bottom: 1px solid var(--line); background: rgba(0,0,0,.3); }
+    .feature img { display: block; width: 100%; height: 180px; object-fit: contain; border-bottom: 1px solid var(--line); background: rgba(0,0,0,.24); padding: 18px; }
     .feature-body { padding: 18px; }
+    .sprite-pair {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      border-bottom: 1px solid var(--line);
+      background: var(--line);
+    }
+    .sprite-pair img {
+      height: 180px;
+      border-bottom: 0;
+      background: rgba(0,0,0,.24);
+    }
 
     /* ── Tabela ──────────────────────────────────────────────── */
     table { width: calc(100% - 60px); margin: 4px 30px 30px; border-collapse: collapse; border-radius: var(--rs); overflow: hidden; background: rgba(255,255,255,.025); }
@@ -420,10 +432,13 @@
       <h2>O que acontece durante o jogo</h2>
       <div class="feature-grid">
         <article class="feature">
-          <img src="../Docs/imgs/chipdrive.png" alt="Data Core">
+          <div class="sprite-pair">
+            <img src="../Assets/Resources/Sprites/drive.png" alt="PenDrive do jogo">
+            <img src="../Assets/Resources/Sprites/chip.png" alt="Data Core do jogo">
+          </div>
           <div class="feature-body">
-            <h3>Coletar Data Cores</h3>
-            <p>Cada item aproxima Blink do hack final. Três coletados e o portal de fuga se abre.</p>
+            <h3>Coletar PenDrives e Data Cores</h3>
+            <p>Os itens corretos do jogo agora aparecem aqui: o PenDrive e o chip que juntos representam o hack do mainframe.</p>
           </div>
         </article>
         <article class="feature">
@@ -434,10 +449,17 @@
           </div>
         </article>
         <article class="feature">
+          <img src="../Docs/imgs/polvina.png" alt="Drone de patrulha">
+          <div class="feature-body">
+            <h3>Escapar dos drones</h3>
+            <p>Os robôs de patrulha reforçam que o laboratório está vigilante e tentando impedir a fuga do Blink.</p>
+          </div>
+        </article>
+        <article class="feature">
           <img src="../Docs/imgs/poca.png" alt="Ácido fluorescente">
           <div class="feature-body">
-            <h3>Sobreviver ao laboratório</h3>
-            <p>Drones e ácido fluorescente reforçam que o ambiente quer expulsar Blink.</p>
+            <h3>Evitar o ácido fluorescente</h3>
+            <p>O perigo ambiental completa a leitura da fase: o laboratório inteiro é hostil, não só os inimigos móveis.</p>
           </div>
         </article>
       </div>

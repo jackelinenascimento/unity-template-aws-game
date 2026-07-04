@@ -117,7 +117,22 @@ public class HUDManager : MonoBehaviour
     {
         EnsureScoreText();
         if (scoreText != null)
-            scoreText.text = $"Data Cores: {current}/{total}";
+        {
+            int penDrivesTotal = _gameManager != null ? _gameManager.GetRequiredCount(CollectibleType.PenDrive) : 0;
+            int penDrivesCollected = _gameManager != null ? _gameManager.GetCollectedCount(CollectibleType.PenDrive) : 0;
+            int chipsTotal = _gameManager != null ? _gameManager.GetRequiredCount(CollectibleType.DataCore) : 0;
+            int chipsCollected = _gameManager != null ? _gameManager.GetCollectedCount(CollectibleType.DataCore) : 0;
+
+            if (penDrivesTotal > 0 || chipsTotal > 0)
+            {
+                scoreText.text =
+                    $"Data Cores: {current}/{total}  •  PenDrives: {penDrivesCollected}/{penDrivesTotal}  •  Chips: {chipsCollected}/{chipsTotal}";
+            }
+            else
+            {
+                scoreText.text = $"Data Cores: {current}/{total}";
+            }
+        }
     }
 
     private void OnCountdownChanged(float remainingSeconds, float totalSeconds)
